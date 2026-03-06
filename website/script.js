@@ -1,4 +1,4 @@
-// ===== SpaceX 风格互动脚本 =====
+// ===== 行星探路者 · 互动脚本 =====
 
 // 导航栏滚动效果
 const navbar = document.querySelector('.navbar');
@@ -15,20 +15,20 @@ function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
     
-    const particleCount = 80;
+    const particleCount = 60;
     
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
-        const size = Math.random() * 3 + 1;
+        const size = Math.random() * 2.5 + 0.8;
         particle.style.cssText = `
             position: absolute;
             width: ${size}px;
             height: ${size}px;
-            background: rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2});
+            background: rgba(201, 166, 107, ${Math.random() * 0.4 + 0.15});
             border-radius: 50%;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;
-            animation: float ${Math.random() * 15 + 10}s linear infinite;
+            animation: float ${Math.random() * 12 + 8}s linear infinite;
             animation-delay: ${Math.random() * 5}s;
             pointer-events: none;
         `;
@@ -51,7 +51,7 @@ style.textContent = `
             opacity: 1;
         }
         100% {
-            transform: translateY(-100vh) translateX(${Math.random() * 100 - 50}px);
+            transform: translateY(-100vh) translateX(${Math.random() * 60 - 30}px);
             opacity: 0;
         }
     }
@@ -60,7 +60,7 @@ document.head.appendChild(style);
 
 // 滚动动画
 function handleScrollAnimation() {
-    const elements = document.querySelectorAll('.timeline-item, .research-card, .stat-card, .achievement-card, .contact-item, .gallery-item');
+    const elements = document.querySelectorAll('.timeline-item, .research-card, .stat-card, .achievement-card, .contact-item, .gallery-item, .team-card');
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -70,7 +70,7 @@ function handleScrollAnimation() {
         });
     }, {
         threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        rootMargin: '0px 0px -40px 0px'
     });
     
     elements.forEach(el => {
@@ -99,7 +99,10 @@ function animateNumbers() {
 
 function animateCount(element, target) {
     let current = 0;
-    const increment = target / 50;
+    const increment = target / 40;
+    const duration = 1600;
+    const interval = duration / 40;
+    
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
@@ -108,7 +111,7 @@ function animateCount(element, target) {
         } else {
             element.textContent = Math.floor(current) + '%';
         }
-    }, 40);
+    }, interval);
 }
 
 // 时间线点击交互
@@ -124,7 +127,7 @@ function initTimelineInteraction() {
             });
             
             if (!item.classList.contains('current')) {
-                item.style.background = 'rgba(241, 61, 50, 0.15)';
+                item.style.background = 'var(--bg-card-light)';
             }
         });
     });
@@ -132,7 +135,7 @@ function initTimelineInteraction() {
 
 // 研究卡片点击效果
 function initCardInteraction() {
-    const cards = document.querySelectorAll('.research-card, .achievement-card');
+    const cards = document.querySelectorAll('.research-card, .achievement-card, .team-card');
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
@@ -141,7 +144,7 @@ function initCardInteraction() {
                     c.style.borderColor = '';
                 }
             });
-            card.style.borderColor = 'var(--spacex-red)';
+            card.style.borderColor = 'var(--accent)';
         });
     });
 }
@@ -154,7 +157,7 @@ function initGalleryInteraction() {
         item.addEventListener('mouseenter', () => {
             galleryItems.forEach(i => {
                 if (i !== item) {
-                    i.style.opacity = '0.5';
+                    i.style.opacity = '0.6';
                 }
             });
         });
@@ -183,16 +186,27 @@ function initSmoothScroll() {
     });
 }
 
-// 鼠标跟随效果（英雄区）
-function initMouseFollow() {
-    const hero = document.querySelector('.hero');
-    if (!hero) return;
+// 图片堆叠悬停效果
+function initImageStackInteraction() {
+    const stackImgs = document.querySelectorAll('.stack-img');
     
-    hero.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
+    stackImgs.forEach(img => {
+        img.addEventListener('mouseenter', () => {
+            stackImgs.forEach(i => {
+                if (i !== img) {
+                    i.style.opacity = '0.7';
+                    i.style.zIndex = '1';
+                }
+            });
+            img.style.zIndex = '10';
+        });
         
-        hero.style.backgroundPosition = `${50 + x * 5}% ${50 + y * 5}%`;
+        img.addEventListener('mouseleave', () => {
+            stackImgs.forEach(i => {
+                i.style.opacity = '';
+                i.style.zIndex = '';
+            });
+        });
     });
 }
 
@@ -205,13 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initCardInteraction();
     initGalleryInteraction();
     initSmoothScroll();
-    initMouseFollow();
+    initImageStackInteraction();
     
-    console.log('%c PLANETARY PATHFINDER ', 'background: #F13D32; color: #fff; font-size: 20px; font-weight: bold; padding: 10px 20px;');
-    console.log('%c 深空探测实验室 · USTC ', 'color: #E8E8E8; font-size: 12px;');
+    console.log('%c PLANETARY PATHFINDER ', 'background: #C9A66B; color: #0D0D0F; font-size: 18px; font-weight: bold; padding: 10px 18px;');
+    console.log('%c 深空探测实验室 · USTC ', 'color: #A8A8B0; font-size: 11px;');
 });
 
-// 页面加载完成后的初始动画
+// 页面加载完成
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
 });

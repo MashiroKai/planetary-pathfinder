@@ -20,7 +20,6 @@
                 <li><a href="#progress">进展</a></li>
                 <li><a href="#research">研究</a></li>
                 <li><a href="#achievements">成果</a></li>
-                <li><a href="#team">导师</a></li>
                 <li><a href="#join">加入</a></li>
             </ul>
             <button class="nav-toggle" aria-label="切换导航">
@@ -31,7 +30,7 @@
         </div>
     </nav>
 
-    <!-- 英雄区 -->
+    <!-- 英雄区 - 月球表面 -->
     <section id="home" class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-particles" id="particles"></div>
@@ -50,48 +49,40 @@
         </div>
     </section>
 
-    <!-- 项目介绍 -->
+    <!-- 项目介绍 - 火星车和月球阴影区 -->
     <section id="about" class="section">
         <div class="container">
             <h2 class="section-title">任务使命</h2>
             <div class="about-grid">
                 <div class="about-content">
                     <p class="about-text">
-                        <strong>行星探路者实验室</strong>面向未来月球基地与火星基地开发做准备。
-                        在月球及火星表面生存条件恶劣，多数情况不能由人直接进行工作，具有智能的机器人则变得尤为关键。
+                        <strong>行星探路者实验室</strong>专注于地外探测车系统的前沿研究。
+                        我们开发能够在<strong>月球与火星表面</strong>自主行驶、避障和规划路线的智能探测车。
                     </p>
                     <p class="about-text">
-                        月球拥有丰富宝贵资源：天然真空环境可供天文观测、丰富的氦 3 资源、南极永久冰原区的水资源。
-                        火星作为人类第二居住星球，是人类成为多行星物种的第一步。
+                        融合<strong>物理学、电子工程、计算机科学</strong>多学科知识，
+                        为本科生提供真实的科研实践平台。
                     </p>
                     <h3 class="about-subtitle">CORE TASKS</h3>
                     <ul class="about-list">
                         <li>
-                            <span class="list-icon">🌙</span>
+                            <span class="list-icon"></span>
                             <span>月球车自主导航系统研发</span>
                         </li>
                         <li>
-                            <span class="list-icon">🔴</span>
+                            <span class="list-icon"></span>
                             <span>火星车环境感知与路径规划</span>
                         </li>
                         <li>
-                            <span class="list-icon">🛰️</span>
+                            <span class="list-icon"></span>
                             <span>探测载荷集成与野外科学观测</span>
                         </li>
                     </ul>
                 </div>
-                <div class="about-stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" data-count="6">0</span>
-                        <span class="stat-label">项目阶段</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" data-count="100">0</span>
-                        <span class="stat-label">执行进度 (%)</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number">USTC</span>
-                        <span class="stat-label">中国科大</span>
+                <div class="about-images">
+                    <div class="image-stack">
+                        <img src="images/火星车.jpg" alt="火星车" class="stack-img img-1">
+                        <img src="images/月球阴影区.jpg" alt="月球阴影区" class="stack-img img-2">
                     </div>
                 </div>
             </div>
@@ -103,28 +94,28 @@
         <div class="container">
             <h2 class="section-title">项目进展</h2>
             <div class="timeline">
-                <div class="timeline-item completed" data-aos="fade-up">
+                <div class="timeline-item completed">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
                         <h4>2025.07-08</h4>
                         <p>项目准备</p>
                     </div>
                 </div>
-                <div class="timeline-item completed" data-aos="fade-up">
+                <div class="timeline-item completed">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
                         <h4>2025.09-10</h4>
                         <p>理论讲授</p>
                     </div>
                 </div>
-                <div class="timeline-item completed" data-aos="fade-up">
+                <div class="timeline-item completed">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
                         <h4>2025.11-12</h4>
                         <p>硬件研制</p>
                     </div>
                 </div>
-                <div class="timeline-item current" data-aos="fade-up">
+                <div class="timeline-item current">
                     <div class="timeline-marker">●</div>
                     <div class="timeline-content">
                         <h4>2026.01-03</h4>
@@ -132,14 +123,14 @@
                         <span class="timeline-status current">IN PROGRESS</span>
                     </div>
                 </div>
-                <div class="timeline-item pending" data-aos="fade-up">
+                <div class="timeline-item pending">
                     <div class="timeline-marker">○</div>
                     <div class="timeline-content">
                         <h4>2026.04-06</h4>
                         <p>校内测试</p>
                     </div>
                 </div>
-                <div class="timeline-item pending" data-aos="fade-up">
+                <div class="timeline-item pending">
                     <div class="timeline-marker">○</div>
                     <div class="timeline-content">
                         <h4>2026.07-08</h4>
@@ -155,44 +146,39 @@
         <div class="container">
             <h2 class="section-title">研究方向</h2>
             <div class="research-grid">
-                <div class="research-card" data-aos="fade-up" data-aos-delay="0">
-                    <div class="research-icon">☢️</div>
-                    <h3>行星辐射探测</h3>
-                    <p>行星辐射探测技术，应用于月球与火星表面辐射环境监测</p>
-                    <ul class="research-list">
-                        <li>中子伽马射线探测</li>
-                        <li>辐射剂量测量</li>
-                        <li>粒子鉴别与分析</li>
-                    </ul>
-                    <a href="#join" class="card-link">了解更多 →</a>
-                </div>
-                <div class="research-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="research-icon">🌑</div>
-                    <h3>极弱光导航</h3>
-                    <p>极弱光环境及能见度差情况下的自主导航能力</p>
-                    <ul class="research-list">
-                        <li>月球南极永久阴影区探测</li>
-                        <li>火星表面沙暴区导航</li>
-                        <li>低照度视觉增强</li>
-                    </ul>
-                    <a href="#join" class="card-link">了解更多 →</a>
-                </div>
-                <div class="research-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="research-icon">🧭</div>
-                    <h3>自主规划</h3>
-                    <p>行星车自主路径规划及导航技术</p>
+                <div class="research-card">
+                    <div class="research-icon-moon"></div>
+                    <h3>自主避障</h3>
+                    <p>基于传感器融合的环境感知与实时避障算法</p>
                     <ul class="research-list">
                         <li>激光雷达/视觉 SLAM</li>
                         <li>深度学习目标检测</li>
                         <li>动态路径规划</li>
                     </ul>
-                    <a href="#join" class="card-link">了解更多 →</a>
+                    <a href="#join" class="card-link">了解更多</a>
                 </div>
-            </div>
-            
-            <div class="research-note">
-                <p>📍 野外实践基地：青海冷湖类行星表面环境</p>
-                <p>开展以科学观测为目标的野外探测实验</p>
+                <div class="research-card">
+                    <div class="research-icon-mars"></div>
+                    <h3>路径规划</h3>
+                    <p>全局与局部路径规划算法，优化行驶路线</p>
+                    <ul class="research-list">
+                        <li>A*/D* 算法优化</li>
+                        <li>地形可通行性分析</li>
+                        <li>能耗最优路径</li>
+                    </ul>
+                    <a href="#join" class="card-link">了解更多</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-icon-gear"></div>
+                    <h3>控制系统</h3>
+                    <p>探测车运动控制与导航系统开发</p>
+                    <ul class="research-list">
+                        <li>嵌入式系统开发</li>
+                        <li>电机控制算法</li>
+                        <li>多传感器融合</li>
+                    </ul>
+                    <a href="#join" class="card-link">了解更多</a>
+                </div>
             </div>
         </div>
     </section>
@@ -204,25 +190,25 @@
             <div class="achievements-grid">
                 <div class="achievement-card">
                     <div class="achievement-number">01</div>
-                    <div class="achievement-icon">📄</div>
+                    <div class="achievement-icon-paper"></div>
                     <h3>学术论文</h3>
                     <p>国内外期刊和会议发表多篇研究论文</p>
                 </div>
                 <div class="achievement-card">
                     <div class="achievement-number">02</div>
-                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-icon-trophy"></div>
                     <h3>竞赛获奖</h3>
                     <p>机器人与人工智能竞赛优异成绩</p>
                 </div>
                 <div class="achievement-card">
                     <div class="achievement-number">03</div>
-                    <div class="achievement-icon">🔧</div>
+                    <div class="achievement-icon-tools"></div>
                     <h3>技术成果</h3>
                     <p>开源项目、专利与技术文档</p>
                 </div>
             </div>
             
-            <h3 class="hardware-title">HARDWARE</h3>
+            <h3 class="hardware-title">硬件成果</h3>
             <div class="hardware-gallery">
                 <div class="gallery-item">
                     <img src="images/PCB 设计及其结构.jpeg" alt="PCB 设计">
@@ -245,7 +231,7 @@
                 <div class="gallery-item">
                     <img src="images/户外电源.jpg" alt="户外电源">
                     <div class="gallery-overlay">
-                        <p>户外电源系统</p>
+                        <p>电源管理系统</p>
                     </div>
                 </div>
             </div>
@@ -253,25 +239,36 @@
     </section>
 
     <!-- 导师团队 -->
-    <section id="team" class="section">
+    <section id="team" class="section section-dark">
         <div class="container">
             <h2 class="section-title">导师团队</h2>
-            <div class="team-single">
-                <div class="team-photo">
-                    <img src="https://faculty.ustc.edu.cn/_upload/article/images/ac/1a/37f583904124a1e2f3e0e3f5f5a5/f8c0b6e5-4e5e-4e5e-8e5e-5e5e5e5e5e5e.jpg" alt="封常青教授" onerror="this.style.display='none';this.parentElement.innerHTML='<div class=\\'photo-placeholder\\'>👨‍🏫</div>'">
-                </div>
-                <div class="team-intro">
-                    <h3>封常青</h3>
-                    <p class="team-role">项目负责人 / 教授 / 博士</p>
-                    <div class="team-details">
-                        <p><strong>工作单位：</strong>中国科学技术大学核科学技术研究教育学院 / 物理学院 / 核探测与核电子学国家重点实验室</p>
-                        <p><strong>研究方向：</strong>核探测与核电子学，主要兴趣为微弱的信号探测、微弱信号的数字化处理、高精度时间测量、高速数据采集、基于 FPGA 的机器学习与信息技术等</p>
-                        <p><strong>联系方式：</strong><a href="mailto:fengcq@ustc.edu.cn">fengcq@ustc.edu.cn</a> | 0551-63600408</p>
-                        <p><strong>荣誉奖项：</strong>2019 年安徽省科技奖一等奖、2018 年中科院卓越研究员、2017 年安徽省科技奖一等奖</p>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img src="images/professor.jpg" alt="教授">
                     </div>
-                    <a href="https://faculty.ustc.edu.cn/fengchangqing/zh_CN/index.htm" target="_blank" class="btn-more">更多详情 →</a>
+                    <h3>待定</h3>
+                    <p class="team-role">项目负责人 · 教授</p>
+                    <p class="team-desc">核探测与核电子学、行星科学</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img src="images/professor.jpg" alt="指导老师">
+                    </div>
+                    <h3>待定</h3>
+                    <p class="team-role">指导老师</p>
+                    <p class="team-desc">自主导航、机器人控制</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-photo">
+                        <img src="images/professor.jpg" alt="指导老师">
+                    </div>
+                    <h3>待定</h3>
+                    <p class="team-role">指导老师</p>
+                    <p class="team-desc">嵌入式系统、传感器融合</p>
                 </div>
             </div>
+            <p class="team-note">导师信息待更新，请联系项目负责人获取详细信息</p>
         </div>
     </section>
 
@@ -284,28 +281,28 @@
                     <h3>招募要求</h3>
                     <ul class="join-list">
                         <li>
-                            <span class="join-icon">✓</span>
+                            <span class="join-icon"></span>
                             <div>
                                 <strong>专业</strong>
                                 <p>物理、电子工程、计算机科学、自动化等相关专业</p>
                             </div>
                         </li>
                         <li>
-                            <span class="join-icon">✓</span>
+                            <span class="join-icon"></span>
                             <div>
                                 <strong>年级</strong>
                                 <p>本科生（大二、大三优先）</p>
                             </div>
                         </li>
                         <li>
-                            <span class="join-icon">✓</span>
+                            <span class="join-icon"></span>
                             <div>
                                 <strong>技能</strong>
                                 <p>对机器人、自主导航感兴趣，有编程基础者优先</p>
                             </div>
                         </li>
                         <li>
-                            <span class="join-icon">✓</span>
+                            <span class="join-icon"></span>
                             <div>
                                 <strong>时间</strong>
                                 <p>每周至少 8 小时科研时间</p>
@@ -334,17 +331,17 @@
             <h2 class="section-title">联系我们</h2>
             <div class="contact-grid">
                 <div class="contact-item">
-                    <div class="contact-icon">📧</div>
+                    <div class="contact-icon-mail"></div>
                     <h4>邮箱</h4>
                     <p>kaiyu@mail.ustc.edu.cn</p>
                 </div>
                 <div class="contact-item">
-                    <div class="contact-icon">🏫</div>
+                    <div class="contact-icon-location"></div>
                     <h4>地址</h4>
                     <p>中国科学技术大学<br>核探测与核电子学实验室</p>
                 </div>
                 <div class="contact-item">
-                    <div class="contact-icon">💬</div>
+                    <div class="contact-icon-chat"></div>
                     <h4>咨询</h4>
                     <p>欢迎邮件咨询<br>我们将尽快回复</p>
                 </div>
