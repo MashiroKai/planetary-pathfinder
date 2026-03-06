@@ -430,8 +430,8 @@ body::after {
 /* ===== 项目进展 ===== */
 .progress-layout {
     display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 60px;
+    grid-template-columns: 1fr 380px;
+    gap: 70px;
     align-items: start;
 }
 
@@ -441,7 +441,7 @@ body::after {
 
 .timeline {
     position: relative;
-    max-width: 600px;
+    max-width: 580px;
     margin: 0 auto;
     padding: 20px 0;
 }
@@ -451,24 +451,22 @@ body::after {
     top: 100px;
 }
 
+/* 专业图片展示 - 水平手风琴 */
 .photo-showcase {
-    position: relative;
-    height: 360px;
-    perspective: 1000px;
+    display: flex;
+    gap: 10px;
+    height: 280px;
 }
 
 .showcase-item {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    border-radius: 8px;
+    flex: 1;
+    border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--border);
-    height: 280px;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    min-width: 80px;
 }
 
 .showcase-item img {
@@ -479,39 +477,19 @@ body::after {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 默认状态 - 层叠排列 */
-.showcase-item[data-index="0"] {
-    transform: translateZ(0) scale(1);
-    z-index: 3;
-    opacity: 1;
-}
-
-.showcase-item[data-index="1"] {
-    transform: translateZ(-60px) translateY(20px) scale(0.92);
-    z-index: 2;
-    opacity: 0.6;
-    filter: blur(1px);
-}
-
-.showcase-item[data-index="2"] {
-    transform: translateZ(-120px) translateY(40px) scale(0.84);
-    z-index: 1;
-    opacity: 0.4;
-    filter: blur(2px);
-}
-
-/* 悬停状态 - 前置放大 */
+/* 悬停时 - 当前展开，其他压缩 */
 .showcase-item:hover {
-    transform: translateZ(40px) scale(1.08) !important;
-    z-index: 10 !important;
-    opacity: 1;
-    filter: blur(0);
+    flex: 3;
     border-color: var(--accent);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .showcase-item:hover img {
-    transform: scale(1.05);
+    transform: scale(1.08);
+}
+
+.showcase-item:not(:hover) {
+    opacity: 0.6;
 }
 
 .showcase-label {
@@ -519,12 +497,20 @@ body::after {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%);
-    padding: 12px 18px;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
+    padding: 14px 16px;
     color: var(--text-primary);
     font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.showcase-item:hover .showcase-label {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timeline::before {
@@ -1439,28 +1425,12 @@ body::after {
     }
 
     .photo-showcase {
-        height: 280px;
-    }
-
-    .showcase-item {
         height: 220px;
-    }
-
-    .showcase-item[data-index="1"] {
-        transform: translateZ(-50px) translateY(15px) scale(0.92);
-    }
-
-    .showcase-item[data-index="2"] {
-        transform: translateZ(-100px) translateY(30px) scale(0.84);
-    }
-
-    .showcase-item:hover {
-        transform: translateZ(30px) scale(1.08) !important;
     }
 
     .showcase-label {
         font-size: 12px;
-        padding: 10px 14px;
+        padding: 12px 14px;
     }
 
     .image-stack {

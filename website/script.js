@@ -170,33 +170,9 @@ function initGalleryInteraction() {
     });
 }
 
-// 项目进展图片 3D 层叠效果
+// 项目进展图片 - 水平手风琴效果
 function initPhotoShowcase() {
-    const showcaseItems = document.querySelectorAll('.showcase-item');
-    
-    showcaseItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            // 其他项后退
-            showcaseItems.forEach((i, idx) => {
-                if (i !== item) {
-                    i.style.transform = `translateZ(-80px) translateY(${30 + idx * 10}px) scale(0.88)`;
-                    i.style.opacity = '0.3';
-                    i.style.filter = 'blur(2px)';
-                    i.style.zIndex = '1';
-                }
-            });
-        });
-        
-        item.addEventListener('mouseleave', () => {
-            // 恢复原始层叠状态
-            showcaseItems.forEach((i, idx) => {
-                i.style.transform = '';
-                i.style.opacity = '';
-                i.style.filter = '';
-                i.style.zIndex = '';
-            });
-        });
-    });
+    // CSS flexbox 已处理主要交互，无需额外 JS
 }
 
 // 平滑滚动
