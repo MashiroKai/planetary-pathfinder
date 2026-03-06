@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>行星探路者 | Planetary Pathfinder Laboratory</title>
-    <meta name="description" content="行星探路者实验室 - 面向月球车与火星车研制的深空探测科研项目，招募本科生参与自主避障导航、路线规划等任务">
+    <title>Planetary Pathfinder | 行星探路者实验室</title>
+    <meta name="description" content="面向月球车与火星车研制的深空探测实验室">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,16 +12,15 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-text">行星探路者</span>
+                <span class="logo-text">PLANETARY PATHFINDER</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">项目介绍</a></li>
-                <li><a href="#progress">项目进展</a></li>
-                <li><a href="#research">研究方向</a></li>
-                <li><a href="#achievements">研究成果</a></li>
-                <li><a href="#team">导师团队</a></li>
-                <li><a href="#join">加入我们</a></li>
+                <li><a href="#home">HOME</a></li>
+                <li><a href="#about">MISSION</a></li>
+                <li><a href="#progress">TIMELINE</a></li>
+                <li><a href="#research">RESEARCH</a></li>
+                <li><a href="#achievements">ACHIEVEMENTS</a></li>
+                <li><a href="#join">JOIN US</a></li>
             </ul>
             <button class="nav-toggle" aria-label="切换导航">
                 <span></span>
@@ -34,120 +33,117 @@
     <!-- 英雄区 -->
     <section id="home" class="hero">
         <div class="hero-overlay"></div>
+        <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
-            <h1 class="hero-title">行星探路者</h1>
-            <p class="hero-subtitle">Planetary Pathfinder Laboratory</p>
-            <p class="hero-description">面向月球车与火星车研制的<br>深空探测实验室</p>
-            <a href="#about" class="hero-cta">探索任务</a>
+            <h1 class="hero-title">PLANETARY PATHFINDER</h1>
+            <p class="hero-subtitle">月球车与火星车自主导航系统</p>
+            <p class="hero-description">深空探测实验室 · 中国科学技术大学</p>
+            <div class="hero-buttons">
+                <a href="#about" class="btn-hero">探索任务</a>
+                <a href="#join" class="btn-hero-outline">加入我们</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>SCROLL</span>
+            <div class="scroll-line"></div>
         </div>
     </section>
 
     <!-- 项目介绍 -->
     <section id="about" class="section">
         <div class="container">
-            <h2 class="section-title">关于项目</h2>
+            <h2 class="section-title">MISSION</h2>
             <div class="about-grid">
                 <div class="about-content">
                     <p class="about-text">
-                        行星探路者实验室专注于<strong>地外探测车系统</strong>的前沿研究，
-                        致力于开发能够在<strong>月球与火星表面</strong>自主行驶、避障和规划路线的智能探测车。
+                        <strong>行星探路者实验室</strong>专注于地外探测车系统的前沿研究。
+                        我们开发能够在<strong>月球与火星表面</strong>自主行驶、避障和规划路线的智能探测车。
                     </p>
                     <p class="about-text">
-                        项目融合<strong>物理学、电子工程、计算机科学</strong>等多学科知识，
-                        为本科生提供真实的科研实践平台，培养跨学科创新能力。
+                        融合<strong>物理学、电子工程、计算机科学</strong>多学科知识，
+                        为本科生提供真实的科研实践平台。
                     </p>
-                    <h3 class="about-subtitle">核心任务</h3>
+                    <h3 class="about-subtitle">CORE TASKS</h3>
                     <ul class="about-list">
-                        <li>月球车与火星车自主导航系统研发</li>
-                        <li>复杂行星表面环境感知与路径规划</li>
-                        <li>探测载荷集成与野外科学观测</li>
+                        <li>
+                            <span class="list-icon">🌙</span>
+                            <span>月球车自主导航系统研发</span>
+                        </li>
+                        <li>
+                            <span class="list-icon">🔴</span>
+                            <span>火星车环境感知与路径规划</span>
+                        </li>
+                        <li>
+                            <span class="list-icon">🛰️</span>
+                            <span>探测载荷集成与野外科学观测</span>
+                        </li>
                     </ul>
-                    <div class="about-stats">
-                        <div class="stat">
-                            <span class="stat-number">6</span>
-                            <span class="stat-label">项目阶段</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">20 万</span>
-                            <span class="stat-label">项目预算</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">100%</span>
-                            <span class="stat-label">执行进度</span>
-                        </div>
-                    </div>
                 </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1614728853913-1e221a6572e3?w=800&q=80" alt="火星车概念图" class="project-image">
+                <div class="about-stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="6">0</span>
+                        <span class="stat-label">项目阶段</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="20">0</span>
+                        <span class="stat-label">预算 (万元)</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="100">0</span>
+                        <span class="stat-label">执行进度 (%)</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 项目进展 -->
-    <section id="progress" class="section section-alt">
+    <section id="progress" class="section section-dark">
         <div class="container">
-            <h2 class="section-title">项目进展</h2>
+            <h2 class="section-title">TIMELINE</h2>
             <div class="timeline">
-                <div class="timeline-item completed">
+                <div class="timeline-item completed" data-aos="fade-up">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
-                        <h4>2025 年 7-8 月</h4>
+                        <h4>2025.07-08</h4>
                         <p>项目准备</p>
-                        <span class="timeline-status">已完成</span>
                     </div>
                 </div>
-                <div class="timeline-item completed">
+                <div class="timeline-item completed" data-aos="fade-up">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
-                        <h4>2025 年 9-10 月</h4>
-                        <p>理论讲授 · 学生队伍组建</p>
-                        <span class="timeline-status">已完成</span>
+                        <h4>2025.09-10</h4>
+                        <p>理论讲授</p>
                     </div>
                 </div>
-                <div class="timeline-item completed">
+                <div class="timeline-item completed" data-aos="fade-up">
                     <div class="timeline-marker">✓</div>
                     <div class="timeline-content">
-                        <h4>2025 年 11-12 月</h4>
+                        <h4>2025.11-12</h4>
                         <p>硬件研制</p>
-                        <span class="timeline-status">已完成</span>
                     </div>
                 </div>
-                <div class="timeline-item current">
+                <div class="timeline-item current" data-aos="fade-up">
                     <div class="timeline-marker">●</div>
                     <div class="timeline-content">
-                        <h4>2026 年 1-3 月</h4>
-                        <p>自主控制与导航软件开发</p>
-                        <span class="timeline-status current">进行中</span>
+                        <h4>2026.01-03</h4>
+                        <p>软件开发</p>
+                        <span class="timeline-status current">IN PROGRESS</span>
                     </div>
                 </div>
-                <div class="timeline-item pending">
+                <div class="timeline-item pending" data-aos="fade-up">
                     <div class="timeline-marker">○</div>
                     <div class="timeline-content">
-                        <h4>2026 年 4-6 月</h4>
-                        <p>校内现场测试</p>
-                        <span class="timeline-status">待执行</span>
+                        <h4>2026.04-06</h4>
+                        <p>校内测试</p>
                     </div>
                 </div>
-                <div class="timeline-item pending">
+                <div class="timeline-item pending" data-aos="fade-up">
                     <div class="timeline-marker">○</div>
                     <div class="timeline-content">
-                        <h4>2026 年 7-8 月</h4>
-                        <p>青海冷湖野外实践</p>
-                        <span class="timeline-status">待执行</span>
+                        <h4>2026.07-08</h4>
+                        <p>野外实践</p>
                     </div>
-                </div>
-            </div>
-            
-            <div class="budget-summary">
-                <h3>经费使用情况</h3>
-                <div class="budget-bar">
-                    <div class="budget-filled" style="width: 99.97%"></div>
-                </div>
-                <div class="budget-details">
-                    <span>已使用 <strong>19.99 万元</strong></span>
-                    <span>总预算 <strong>20.00 万元</strong></span>
-                    <span>剩余 <strong>55.4 元</strong></span>
                 </div>
             </div>
         </div>
@@ -156,158 +152,140 @@
     <!-- 研究方向 -->
     <section id="research" class="section">
         <div class="container">
-            <h2 class="section-title">研究方向</h2>
+            <h2 class="section-title">RESEARCH</h2>
             <div class="research-grid">
-                <div class="research-card">
+                <div class="research-card" data-aos="fade-up" data-aos-delay="0">
                     <div class="research-icon">🌙</div>
                     <h3>自主避障</h3>
-                    <p>基于传感器融合的环境感知与实时避障算法，让探测车在未知地形中安全行驶。</p>
+                    <p>基于传感器融合的环境感知与实时避障算法</p>
                     <ul class="research-list">
                         <li>激光雷达/视觉 SLAM</li>
                         <li>深度学习目标检测</li>
                         <li>动态路径规划</li>
                     </ul>
+                    <a href="#join" class="card-link">了解更多 →</a>
                 </div>
-                <div class="research-card">
+                <div class="research-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="research-icon">🔴</div>
                     <h3>路径规划</h3>
-                    <p>全局与局部路径规划算法，优化行驶路线，提高探测效率。</p>
+                    <p>全局与局部路径规划算法，优化行驶路线</p>
                     <ul class="research-list">
                         <li>A*/D* 算法优化</li>
                         <li>地形可通行性分析</li>
                         <li>能耗最优路径</li>
                     </ul>
+                    <a href="#join" class="card-link">了解更多 →</a>
                 </div>
-                <div class="research-card">
+                <div class="research-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="research-icon">⚙️</div>
                     <h3>控制系统</h3>
-                    <p>探测车运动控制与导航系统开发，实现精准定位与稳定行驶。</p>
+                    <p>探测车运动控制与导航系统开发</p>
                     <ul class="research-list">
                         <li>嵌入式系统开发</li>
                         <li>电机控制算法</li>
                         <li>多传感器融合</li>
                     </ul>
+                    <a href="#join" class="card-link">了解更多 →</a>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- 导师团队 -->
-    <section id="team" class="section section-alt">
-        <div class="container">
-            <h2 class="section-title">导师团队</h2>
-            <div class="team-grid">
-                <div class="team-card">
-                    <div class="team-avatar"></div>
-                    <h3>待定</h3>
-                    <p class="team-role">项目负责人 · 教授</p>
-                    <p class="team-desc">核探测与核电子学、行星科学</p>
-                </div>
-                <div class="team-card">
-                    <div class="team-avatar"></div>
-                    <h3>待定</h3>
-                    <p class="team-role">指导老师</p>
-                    <p class="team-desc">自主导航、机器人控制</p>
-                </div>
-                <div class="team-card">
-                    <div class="team-avatar"></div>
-                    <h3>待定</h3>
-                    <p class="team-role">指导老师</p>
-                    <p class="team-desc">嵌入式系统、传感器融合</p>
-                </div>
-            </div>
-            <p class="team-note">导师信息待更新，请联系项目负责人获取详细信息</p>
         </div>
     </section>
 
     <!-- 研究成果 -->
-    <section id="achievements" class="section">
+    <section id="achievements" class="section section-dark">
         <div class="container">
-            <h2 class="section-title">研究成果</h2>
+            <h2 class="section-title">ACHIEVEMENTS</h2>
             <div class="achievements-grid">
                 <div class="achievement-card">
+                    <div class="achievement-number">01</div>
                     <div class="achievement-icon">📄</div>
                     <h3>学术论文</h3>
-                    <p>在国内外期刊和会议发表多篇研究论文</p>
-                    <span class="achievement-tag">持续更新</span>
+                    <p>国内外期刊和会议发表多篇研究论文</p>
                 </div>
                 <div class="achievement-card">
+                    <div class="achievement-number">02</div>
                     <div class="achievement-icon">🏆</div>
                     <h3>竞赛获奖</h3>
-                    <p>参与各类机器人与人工智能竞赛并获得优异成绩</p>
-                    <span class="achievement-tag">持续更新</span>
+                    <p>机器人与人工智能竞赛优异成绩</p>
                 </div>
                 <div class="achievement-card">
+                    <div class="achievement-number">03</div>
                     <div class="achievement-icon">🔧</div>
                     <h3>技术成果</h3>
                     <p>开源项目、专利与技术文档</p>
-                    <span class="achievement-tag">持续更新</span>
                 </div>
             </div>
             
-            <h3 class="hardware-title">硬件成果</h3>
+            <h3 class="hardware-title">HARDWARE</h3>
             <div class="hardware-gallery">
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1555664424-778a6902201b?w=400&q=80" alt="电路板设计">
-                    <p>PCB 电路板设计</p>
+                    <img src="https://images.unsplash.com/photo-1555664424-778a6902201b?w=400&q=80" alt="电路板">
+                    <div class="gallery-overlay">
+                        <p>PCB 电路板设计</p>
+                    </div>
                 </div>
                 <div class="gallery-item">
                     <img src="https://images.unsplash.com/photo-1581093588402-f4048b6d49d2?w=400&q=80" alt="传感器">
-                    <p>深度相机传感器</p>
+                    <div class="gallery-overlay">
+                        <p>深度相机传感器</p>
+                    </div>
                 </div>
                 <div class="gallery-item">
                     <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&q=80" alt="太阳能板">
-                    <p>太阳能供电系统</p>
+                    <div class="gallery-overlay">
+                        <p>太阳能供电系统</p>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=400&q=80" alt="电源系统">
-                    <p>电源管理系统</p>
+                    <img src="https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=400&q=80" alt="电源">
+                    <div class="gallery-overlay">
+                        <p>电源管理系统</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="expense-summary">
-                <h3>支出明细</h3>
-                <table class="expense-table">
-                    <thead>
-                        <tr>
-                            <th>项目</th>
-                            <th>金额</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>劳务费</td><td>20,650.00</td></tr>
-                        <tr><td>花岗岩、铝合金结构件</td><td>48,600.00</td></tr>
-                        <tr><td>行星车样机小车</td><td>12,569.00</td></tr>
-                        <tr><td>太阳能板转接模块</td><td>2,909.08</td></tr>
-                        <tr><td>PCB 电路板制板费</td><td>21,337.00</td></tr>
-                        <tr><td>PCB 电路板设计与制板</td><td>45,345.84</td></tr>
-                        <tr><td>PCB 结构外壳加工设计</td><td>2,300.00</td></tr>
-                        <tr><td>太阳能板</td><td>5,596.00</td></tr>
-                        <tr><td>图书资料</td><td>1,109.55</td></tr>
-                        <tr><td>激光雷达、深度相机、户外电源</td><td>39,529.00</td></tr>
-                        <tr class="total-row"><td><strong>合计</strong></td><td><strong>199,945.47</strong></td></tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </section>
 
     <!-- 加入我们 -->
-    <section id="join" class="section section-alt">
+    <section id="join" class="section">
         <div class="container">
-            <h2 class="section-title">加入我们</h2>
+            <h2 class="section-title">JOIN US</h2>
             <div class="join-content">
                 <div class="join-info">
-                    <h3>招募要求</h3>
+                    <h3>REQUIREMENTS</h3>
                     <ul class="join-list">
-                        <li><strong>专业</strong> 物理、电子工程、计算机科学、自动化等相关专业</li>
-                        <li><strong>年级</strong> 本科生（大二、大三优先）</li>
-                        <li><strong>技能</strong> 对机器人、自主导航感兴趣，有编程基础者优先</li>
-                        <li><strong>时间</strong> 每周至少 8 小时科研时间</li>
+                        <li>
+                            <span class="join-icon">✓</span>
+                            <div>
+                                <strong>专业</strong>
+                                <p>物理、电子工程、计算机科学、自动化等相关专业</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="join-icon">✓</span>
+                            <div>
+                                <strong>年级</strong>
+                                <p>本科生（大二、大三优先）</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="join-icon">✓</span>
+                            <div>
+                                <strong>技能</strong>
+                                <p>对机器人、自主导航感兴趣，有编程基础者优先</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="join-icon">✓</span>
+                            <div>
+                                <strong>时间</strong>
+                                <p>每周至少 8 小时科研时间</p>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <div class="join-benefits">
-                    <h3>你将获得</h3>
+                    <h3>BENEFITS</h3>
                     <ul class="benefit-list">
                         <li>真实的科研项目经历</li>
                         <li>导师一对一指导</li>
@@ -315,33 +293,30 @@
                         <li>论文发表与竞赛机会</li>
                         <li>推荐信与就业支持</li>
                     </ul>
+                    <a href="mailto:kaiyu@mail.ustc.edu.cn?subject=行星探路者项目报名" class="btn-primary">立即申请</a>
                 </div>
-            </div>
-            <div class="join-cta">
-                <a href="mailto:kaiyu@mail.ustc.edu.cn?subject=行星探路者项目报名" class="btn-primary">立即申请</a>
-                <a href="#contact" class="btn-secondary">了解更多</a>
             </div>
         </div>
     </section>
 
     <!-- 联系我们 -->
-    <section id="contact" class="section">
+    <section id="contact" class="section section-dark">
         <div class="container">
-            <h2 class="section-title">联系</h2>
+            <h2 class="section-title">CONTACT</h2>
             <div class="contact-grid">
                 <div class="contact-item">
                     <div class="contact-icon">📧</div>
-                    <h4>邮箱</h4>
+                    <h4>EMAIL</h4>
                     <p>kaiyu@mail.ustc.edu.cn</p>
                 </div>
                 <div class="contact-item">
                     <div class="contact-icon">🏫</div>
-                    <h4>地址</h4>
+                    <h4>LOCATION</h4>
                     <p>中国科学技术大学<br>核探测与核电子学实验室</p>
                 </div>
                 <div class="contact-item">
                     <div class="contact-icon">💬</div>
-                    <h4>咨询</h4>
+                    <h4>INQUIRY</h4>
                     <p>欢迎邮件咨询<br>我们将尽快回复</p>
                 </div>
             </div>
@@ -351,8 +326,8 @@
     <!-- 页脚 -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Planetary Pathfinder Laboratory</p>
-            <p>University of Science and Technology of China</p>
+            <p>&copy; 2026 PLANETARY PATHFINDER LABORATORY</p>
+            <p>UNIVERSITY OF SCIENCE AND TECHNOLOGY OF CHINA</p>
         </div>
     </footer>
 
