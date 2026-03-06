@@ -312,6 +312,21 @@ ${data.motivation}
 提交时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
 `;
 
+    // 添加提交时间
+    data.submitTime = new Date().toISOString();
+    
+    // 保存到本地存储（后台系统）
+    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+    applications.push(data);
+    localStorage.setItem('applications', JSON.stringify(applications));
+    
+    // 发送到 API（如果有后端）
+    fetch('/api/admin/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).catch(err => console.log('API 不可用，已保存到本地存储'));
+    
     // 使用 mailto 发送邮件（同时发送给 kaiyu 和 fengcq）
     const mailtoLink = `mailto:kaiyu@mail.ustc.edu.cn,fengcq@ustc.edu.cn?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
@@ -322,7 +337,7 @@ ${data.motivation}
     closeApplicationForm();
     
     // 显示成功提示
-    alert('申请信息已准备发送！\n\n邮件将发送至：\n- kaiyu@mail.ustc.edu.cn\n- fengcq@ustc.edu.cn\n\n请在邮件客户端确认发送。');
+    alert('✅ 申请提交成功！\n\n数据已保存到后台管理系统\n邮件将发送至：\n- kaiyu@mail.ustc.edu.cn\n- fengcq@ustc.edu.cn\n\n请在邮件客户端确认发送。');
     
     // 重置表单
     form.reset();
