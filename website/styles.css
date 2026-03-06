@@ -428,11 +428,65 @@ body::after {
 }
 
 /* ===== 项目进展 ===== */
+.progress-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 60px;
+    align-items: start;
+}
+
+.progress-timeline {
+    padding: 20px 0;
+}
+
 .timeline {
     position: relative;
-    max-width: 750px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 20px 0;
+}
+
+.progress-photos {
+    position: sticky;
+    top: 100px;
+}
+
+.photo-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.showcase-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    border: 1px solid var(--border);
+}
+
+.showcase-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.showcase-item:hover img {
+    transform: scale(1.05);
+}
+
+.showcase-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(13,13,15,0.95) 100%);
+    padding: 16px 20px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
 }
 
 .timeline::before {
@@ -1253,9 +1307,14 @@ body::after {
     }
 
     .about-grid,
-    .join-content {
+    .join-content,
+    .progress-layout {
         grid-template-columns: 1fr;
         gap: 45px;
+    }
+
+    .progress-photos {
+        position: static;
     }
 
     .professor-profile {
@@ -1339,6 +1398,14 @@ body::after {
 
     .hardware-gallery {
         grid-template-columns: 1fr;
+    }
+
+    .photo-showcase {
+        gap: 14px;
+    }
+
+    .showcase-item {
+        aspect-ratio: 16/9;
     }
 
     .image-stack {
