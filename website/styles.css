@@ -451,23 +451,21 @@ body::after {
     top: 100px;
 }
 
-/* 专业图片展示 - 垂直手风琴 */
+/* 专业图片展示 - 简洁垂直排列 */
 .photo-showcase {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    height: 420px;
+    gap: 12px;
 }
 
 .showcase-item {
-    flex: 1;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--border);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 180px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
-    min-height: 100px;
 }
 
 .showcase-item img {
@@ -475,22 +473,18 @@ body::after {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 悬停时 - 当前展开，其他压缩 */
+/* 悬停聚焦效果 */
 .showcase-item:hover {
-    flex: 3;
     border-color: var(--accent);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    transform: translateX(8px);
 }
 
 .showcase-item:hover img {
-    transform: scale(1.08);
-}
-
-.showcase-item:not(:hover) {
-    opacity: 0.65;
+    transform: scale(1.06);
 }
 
 .showcase-label {
@@ -498,20 +492,12 @@ body::after {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
-    padding: 14px 18px;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%);
+    padding: 12px 16px;
     color: var(--text-primary);
     font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s ease;
-}
-
-.showcase-item:hover .showcase-label {
-    opacity: 1;
-    transform: translateY(0);
+    letter-spacing: 0.05em;
 }
 
 .timeline::before {
@@ -1425,13 +1411,8 @@ body::after {
         grid-template-columns: 1fr;
     }
 
-    .photo-showcase {
-        height: 340px;
-    }
-
-    .showcase-label {
-        font-size: 12px;
-        padding: 12px 14px;
+    .showcase-item {
+        height: 160px;
     }
 
     .image-stack {
