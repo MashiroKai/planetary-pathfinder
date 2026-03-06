@@ -1084,41 +1084,95 @@ body::after {
 .join-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 70px;
+    gap: 50px;
 }
 
-.join-info h3,
-.join-benefits h3 {
+.join-card {
+    background: linear-gradient(135deg, rgba(26,26,30,0.9) 0%, rgba(26,26,30,0.7) 100%);
+    padding: 45px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.join-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.join-details {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.join-details .detail-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 16px;
+    align-items: baseline;
+}
+
+.join-details .detail-label {
+    color: var(--accent);
     font-size: 13px;
     font-weight: 600;
-    margin-bottom: 28px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
 }
 
-.join-list {
+.join-details .detail-value {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.benefit-list {
     list-style: none;
+    margin-bottom: 28px;
 }
 
-.join-list li {
+.benefit-list li {
+    padding: 14px 0;
+    font-size: 15px;
+    color: var(--text-secondary);
     display: flex;
-    gap: 14px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--border);
-    transition: var(--transition-fast);
+    align-items: center;
+    gap: 12px;
 }
 
-.join-list li:hover {
-    padding-left: 10px;
-}
-
-.join-icon {
-    width: 20px;
-    height: 20px;
+.benefit-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
     background: var(--accent);
     border-radius: 50%;
     flex-shrink: 0;
-    position: relative;
+}
+
+.btn-apply {
+    display: inline-block;
+    width: 100%;
+    padding: 16px 36px;
+    background: var(--accent);
+    color: var(--bg-dark);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    transition: var(--transition-fast);
+    text-align: center;
+}
+
+.btn-apply:hover {
+    background: var(--accent-soft);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201, 166, 107, 0.3);
 }
 
 .join-icon::after {
@@ -1437,6 +1491,15 @@ body::after {
 
     .about-stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    .join-content {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .join-card {
+        padding: 35px;
     }
 
     .nav-links {
