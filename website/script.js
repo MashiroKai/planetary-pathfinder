@@ -10,25 +10,27 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 粒子效果（英雄区）
+// 粒子效果（全局）
 function createParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
     
-    const particleCount = 50;
+    const particleCount = 80;
     
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
+        const size = Math.random() * 3 + 1;
         particle.style.cssText = `
             position: absolute;
-            width: ${Math.random() * 3 + 1}px;
-            height: ${Math.random() * 3 + 1}px;
+            width: ${size}px;
+            height: ${size}px;
             background: rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2});
             border-radius: 50%;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;
-            animation: float ${Math.random() * 10 + 10}s linear infinite;
+            animation: float ${Math.random() * 15 + 10}s linear infinite;
             animation-delay: ${Math.random() * 5}s;
+            pointer-events: none;
         `;
         container.appendChild(particle);
     }
@@ -63,8 +65,7 @@ function handleScrollAnimation() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                entry.target.classList.add('visible');
             }
         });
     }, {
@@ -73,9 +74,7 @@ function handleScrollAnimation() {
     });
     
     elements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        el.classList.add('fade-in');
         observer.observe(el);
     });
 }
@@ -104,10 +103,10 @@ function animateCount(element, target) {
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-            element.textContent = target + (target === 100 ? '%' : target === 20 ? '万' : '');
+            element.textContent = target + '%';
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(current) + (target === 100 ? '%' : target === 20 ? '万' : '');
+            element.textContent = Math.floor(current) + '%';
         }
     }, 40);
 }
@@ -118,12 +117,14 @@ function initTimelineInteraction() {
     
     timelineItems.forEach(item => {
         item.addEventListener('click', () => {
-            // 移除其他项的 active 状态
-            timelineItems.forEach(i => i.style.background = '');
+            timelineItems.forEach(i => {
+                if (i !== item) {
+                    i.style.background = '';
+                }
+            });
             
-            // 如果不是当前进行中的项，添加高亮
             if (!item.classList.contains('current')) {
-                item.style.background = 'rgba(241, 61, 50, 0.1)';
+                item.style.background = 'rgba(241, 61, 50, 0.15)';
             }
         });
     });
@@ -135,7 +136,11 @@ function initCardInteraction() {
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
-            cards.forEach(c => c.style.borderColor = '');
+            cards.forEach(c => {
+                if (c !== card) {
+                    c.style.borderColor = '';
+                }
+            });
             card.style.borderColor = 'var(--spacex-red)';
         });
     });
@@ -178,7 +183,7 @@ function initSmoothScroll() {
     });
 }
 
-// 鼠标跟随效果（可选）
+// 鼠标跟随效果（英雄区）
 function initMouseFollow() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
