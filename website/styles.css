@@ -454,16 +454,18 @@ body::after {
 .photo-showcase {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .showcase-item {
-    border-radius: 8px;
+    border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--border);
-    height: 140px;
-    transition: var(--transition);
+    height: 100px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    opacity: 0.7;
+    position: relative;
 }
 
 .showcase-item img {
@@ -471,17 +473,46 @@ body::after {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.showcase-item.active {
+    height: 320px;
+    border-color: var(--accent);
+    opacity: 1;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.showcase-item.active img {
+    transform: scale(1.05);
 }
 
 .showcase-item:hover {
-    height: 280px;
-    border-color: var(--accent);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+    border-color: var(--text-muted);
 }
 
-.showcase-item:hover img {
-    transform: scale(1.08);
+.showcase-item:hover:not(.active) {
+    height: 120px;
+}
+
+.showcase-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+    padding: 8px 14px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.showcase-item:hover .showcase-label,
+.showcase-item.active .showcase-label {
+    opacity: 1;
 }
 
 .timeline::before {
@@ -1396,15 +1427,24 @@ body::after {
     }
 
     .photo-showcase {
-        gap: 14px;
+        gap: 10px;
     }
 
     .showcase-item {
-        height: 120px;
+        height: 80px;
     }
 
-    .showcase-item:hover {
+    .showcase-item.active {
         height: 240px;
+    }
+
+    .showcase-item:hover:not(.active) {
+        height: 100px;
+    }
+
+    .showcase-label {
+        font-size: 11px;
+        padding: 6px 10px;
     }
 
     .image-stack {

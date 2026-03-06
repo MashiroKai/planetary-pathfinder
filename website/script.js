@@ -170,6 +170,20 @@ function initGalleryInteraction() {
     });
 }
 
+// 项目进展图片点击聚焦
+function initPhotoShowcase() {
+    const showcaseItems = document.querySelectorAll('.showcase-item');
+    
+    showcaseItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // 移除所有 active 状态
+            showcaseItems.forEach(i => i.classList.remove('active'));
+            // 当前项添加 active
+            item.classList.add('active');
+        });
+    });
+}
+
 // 平滑滚动
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -220,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGalleryInteraction();
     initSmoothScroll();
     initImageStackInteraction();
+    initPhotoShowcase();
     
     console.log('%c PLANETARY PATHFINDER ', 'background: #C9A66B; color: #0D0D0F; font-size: 18px; font-weight: bold; padding: 10px 18px;');
     console.log('%c 深空探测实验室 · USTC ', 'color: #A8A8B0; font-size: 11px;');
