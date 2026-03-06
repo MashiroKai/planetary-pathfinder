@@ -950,96 +950,129 @@ body::after {
 /* ===== 导师介绍 ===== */
 .professor-profile {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 50px;
+    grid-template-columns: 320px 1fr;
+    gap: 60px;
     align-items: start;
-    background: var(--bg-card);
-    padding: 45px;
-    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(26,26,30,0.9) 0%, rgba(26,26,30,0.7) 100%);
+    padding: 50px;
+    border-radius: 12px;
     border: 1px solid var(--border);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 .professor-photo {
     width: 100%;
     aspect-ratio: 4/5;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--primary-color), #1a3a5c);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--border);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.professor-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    pointer-events: none;
 }
 
 .professor-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transition);
-    background: var(--white);
-}
-
-.photo-placeholder {
-    font-size: 6rem;
-    color: var(--white);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: grayscale(5%);
 }
 
 .professor-photo:hover img {
-    transform: scale(1.03);
+    transform: scale(1.04);
+    filter: grayscale(0%);
 }
 
 .professor-info {
-    padding-top: 10px;
+    padding-top: 8px;
 }
 
 .professor-info h3 {
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
     color: var(--text-primary);
+    letter-spacing: -0.02em;
 }
 
 .professor-role {
     color: var(--accent);
     font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 24px;
-    letter-spacing: 0.05em;
-    padding-bottom: 20px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-bottom: 24px;
     border-bottom: 1px solid var(--border);
+    display: inline-block;
 }
 
 .professor-details {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
 }
 
-.professor-details p {
+.detail-item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 20px;
+    align-items: baseline;
+}
+
+.detail-label {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.detail-value {
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.7;
 }
 
-.professor-details strong {
-    color: var(--text-primary);
-    font-weight: 500;
-    margin-right: 6px;
+.detail-value a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: var(--transition-fast);
 }
 
-.btn-more {
+.detail-value a:hover {
+    color: var(--accent-soft);
+    text-decoration: underline;
+}
+
+.btn-profile {
     display: inline-block;
-    margin-top: 20px;
-    padding: 12px 28px;
-    background: linear-gradient(135deg, var(--accent), #ff8c5a);
-    color: var(--white);
+    margin-top: 32px;
+    padding: 14px 36px;
+    background: transparent;
+    color: var(--text-primary);
     text-decoration: none;
-    border-radius: 24px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
     font-weight: 600;
     font-size: 14px;
-    transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+    letter-spacing: 0.05em;
+    transition: var(--transition-fast);
+}
+
+.btn-profile:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201, 166, 107, 0.08);
 }
 
 .btn-more:hover {
@@ -1324,9 +1357,18 @@ body::after {
     }
 
     .professor-profile {
-        grid-template-columns: 240px 1fr;
-        gap: 35px;
-        padding: 35px;
+        grid-template-columns: 280px 1fr;
+        gap: 40px;
+        padding: 40px;
+    }
+
+    .professor-info h3 {
+        font-size: 26px;
+    }
+
+    .detail-item {
+        grid-template-columns: 90px 1fr;
+        gap: 16px;
     }
 
     .hero-title {
@@ -1347,14 +1389,14 @@ body::after {
 
     .professor-profile {
         grid-template-columns: 1fr;
-        gap: 30px;
-        padding: 28px;
+        gap: 35px;
+        padding: 32px;
         text-align: center;
     }
 
     .professor-photo {
-        width: 200px;
-        aspect-ratio: 1;
+        width: 220px;
+        aspect-ratio: 4/5;
         margin: 0 auto;
     }
 
@@ -1362,11 +1404,22 @@ body::after {
         text-align: center;
     }
 
-    .professor-details p {
+    .professor-details {
         text-align: left;
     }
 
-    .btn-more {
+    .detail-item {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        margin-bottom: 20px;
+    }
+
+    .detail-label {
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .btn-profile {
         display: inline-block;
     }
 
