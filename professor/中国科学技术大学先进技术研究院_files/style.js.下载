@@ -1,0 +1,109 @@
+$(function () {
+//判断移动设备
+    var isMob = /iPhone|Android/g.test(navigator.userAgent);
+
+    if(isMob){
+        $('.nav_menu').on('touchstart',navMenu);
+        $('.nav_item > a').on('touchstart',subDrop);
+    }
+    // 移动端头部导航点击按钮
+    function navMenu(){
+        var disNav = $('.nav_bd').css('display');
+        if(disNav == 'none'){
+            $('.nav_bd').slideDown(400)
+        }else{
+            $('.nav_bd').slideUp(400)
+        }
+    }
+    // 移动端头部二级导航菜单
+    function subDrop() {
+        var subList = $(this).parent().find('.subNav');
+        if (subList.children('li').length > 0) {
+            var dis_sub = subList.css('display');
+            $('.nav_item').each(function () {
+                if ($(this).find('.subNav>li').length > 0) {
+                    $(this).find('.subNav').slideUp(400);
+                }
+            });
+            if (dis_sub == 'block') {
+                $(this).parent().find('.subNav').slideUp(400);
+            } else {
+                $(this).parent().find('.subNav').slideDown(400);
+            }
+            return false;
+        }
+    }
+    // 侧边栏点击
+    $('.module_side li > .header').click(function () {
+        var list = $(this).parent().find('.item_drop_menu');
+        if(list.children('li').length > 0){
+            var dis_list = list.css('display');
+            $('.module_side li').each(function () {
+                if($(this).find('.item_drop_menu>li').length>0){
+                    $(this).find('ul.item_drop_menu').slideUp(400);
+                    $(this).find('.header>span').removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down');
+                }else{
+                    $(this).find('.header>span').removeClass('glyphicon-menu-down');
+                }
+            });
+            if(dis_list == 'block'){
+                $(this).parent().find('.item_drop_menu').slideUp(400);
+                $(this).find('span').removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down');
+            }else{
+                $(this).parent().find('.item_drop_menu').slideDown(400);
+                $(this).find('span').removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up');
+            }
+        }
+
+    });
+    //pc端导航栏hover事件
+    $('.nav_item').hover(function () {
+        $(this).addClass('hover').siblings().removeClass('hover');
+        $('.link_bg').removeClass('hover');
+        $(this).find('.subNav').show();
+    },function () {
+        $(this).removeClass('hover');
+        $(this).find('.subNav').hide();
+    });
+
+//移动端滑动条
+    var swiper = new Swiper('.swiper-container',{
+        freeMode: true,
+        freeModeMomentumRatio: 0.5,
+        slidesPerView: 'auto'
+    });
+});
+
+$('#search_btn').click(function(){
+    if($('#search_text').val()){
+        $('#search').submit();
+    }
+});
+$("#search_text").keydown(function(e){
+var search_text = $("#search_text").val();
+console.log(e.keyCode==13 && search_text);
+                if(e.keyCode==13 && search_text) { 
+			window.location.href = "/Search/index.html?q="+search_text;
+                }  
+});
+
+$(document).ready(function(){
+    //首先将#back-to-top隐藏
+    $("#gotop").hide();
+    //当滚动条的位置处于距顶部600像素以下时，跳转链接出现，否则消失
+    $(function () {
+        $(window).scroll(function(){
+            if ($(window).scrollTop()>600){
+                $("#gotop").fadeIn(500);
+            }else{
+                $("#gotop").fadeOut(500);
+            }
+        });
+        //当点击跳转链接后，回到页面顶部位置
+        $("#gotop").click(function(){
+            $('body,html').animate({scrollTop:0},500);
+            return false;
+        });
+    });
+});  
+

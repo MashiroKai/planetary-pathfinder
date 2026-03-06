@@ -998,3 +998,142 @@ body::after {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== 导师团队 ===== */
+.team-single {
+    display: flex;
+    gap: 50px;
+    max-width: 1000px;
+    margin: 40px auto 0;
+    background: var(--bg-light);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.team-photo {
+    flex: 0 0 320px;
+    background: linear-gradient(135deg, var(--primary-color), #1a3a5c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.team-photo img {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    object-fit: cover;
+    background: var(--white);
+}
+
+.photo-placeholder {
+    font-size: 8rem;
+    color: var(--white);
+    text-align: center;
+}
+
+.team-intro {
+    flex: 1;
+    padding: 40px;
+    text-align: left;
+}
+
+.team-intro h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.team-role {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-size: 1rem;
+}
+
+.team-details {
+    margin-bottom: 30px;
+}
+
+.team-details p {
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-light);
+}
+
+.team-details strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.btn-more {
+    display: inline-block;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, var(--secondary-color), #ff8c5a);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+}
+
+.btn-more:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+}
+
+/* ===== 研究方向备注 ===== */
+.research-note {
+    margin-top: 50px;
+    padding: 25px;
+    background: rgba(255,107,53,0.1);
+    border-radius: 12px;
+    text-align: center;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.research-note p {
+    margin: 8px 0;
+    color: var(--text-light);
+}
+
+.research-note p:first-child {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* ===== 响应式调整 ===== */
+@media (max-width: 900px) {
+    .team-single {
+        flex-direction: column;
+    }
+    
+    .team-photo {
+        flex: 0 0 auto;
+        padding: 30px 20px;
+    }
+    
+    .team-photo img {
+        max-width: 200px;
+    }
+    
+    .team-intro {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .team-intro h3 {
+        font-size: 1.5rem;
+    }
+    
+    .team-details p {
+        font-size: 0.9rem;
+    }
+}
