@@ -8,41 +8,12 @@
 *~
 
 ## 缓存
-__pycache__/
-.cache/
 node_modules/
-.Python
-venv/
-env/
-
-## 敏感配置
-.env
-.env.local
-*secret*
-*password*
-*.key
-*.pem
-*.crt
-
-## 大文件 (>50MB)
-*.bin
-*.hex
-*.so
-*.dll
-*.exe
-*.iso
-*.zip
-*.tar.gz
-
-## OpenClaw 系统文件
-# (这些在工作区管理，不在工程文件夹)
-.openclaw/
-workspace-state.json
+.cache/
 
 ## 编辑器
 .vscode/
 .idea/
-*.sublime-*
 
 ## 操作系统
 .DS_Store
