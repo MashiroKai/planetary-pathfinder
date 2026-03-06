@@ -170,16 +170,31 @@ function initGalleryInteraction() {
     });
 }
 
-// 项目进展图片点击聚焦
+// 项目进展图片 3D 层叠效果
 function initPhotoShowcase() {
     const showcaseItems = document.querySelectorAll('.showcase-item');
     
     showcaseItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // 移除所有 active 状态
-            showcaseItems.forEach(i => i.classList.remove('active'));
-            // 当前项添加 active
-            item.classList.add('active');
+        item.addEventListener('mouseenter', () => {
+            // 其他项后退
+            showcaseItems.forEach((i, idx) => {
+                if (i !== item) {
+                    i.style.transform = `translateZ(-80px) translateY(${30 + idx * 10}px) scale(0.88)`;
+                    i.style.opacity = '0.3';
+                    i.style.filter = 'blur(2px)';
+                    i.style.zIndex = '1';
+                }
+            });
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            // 恢复原始层叠状态
+            showcaseItems.forEach((i, idx) => {
+                i.style.transform = '';
+                i.style.opacity = '';
+                i.style.filter = '';
+                i.style.zIndex = '';
+            });
         });
     });
 }
