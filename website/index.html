@@ -283,13 +283,6 @@
                                 <p>对机器人、自主导航感兴趣，有编程基础者优先</p>
                             </div>
                         </li>
-                        <li>
-                            <span class="join-icon"></span>
-                            <div>
-                                <strong>时间</strong>
-                                <p>每周至少 8 小时科研时间</p>
-                            </div>
-                        </li>
                     </ul>
                 </div>
                 <div class="join-benefits">
@@ -301,11 +294,84 @@
                         <li>论文发表与竞赛机会</li>
                         <li>推荐信与就业支持</li>
                     </ul>
-                    <a href="mailto:kaiyu@mail.ustc.edu.cn?subject=行星探路者项目报名" class="btn-primary">立即申请</a>
+                    <button class="btn-primary" onclick="openApplicationForm()">立即申请</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- 申请表格模态框 -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeApplicationForm()">&times;</span>
+            <h2>项目申请表</h2>
+            <p class="modal-subtitle">填写以下信息，申请表将发送至项目负责人邮箱</p>
+            <form id="applicationForm" onsubmit="submitApplication(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">性别 *</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="college">学院 *</label>
+                        <input type="text" id="college" name="college" required placeholder="例如：物理学院">
+                    </div>
+                    <div class="form-group">
+                        <label for="major">专业 *</label>
+                        <input type="text" id="major" name="major" required placeholder="例如：核工程">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="grade">年级 *</label>
+                        <select id="grade" name="grade" required>
+                            <option value="">请选择</option>
+                            <option value="大一">大一</option>
+                            <option value="大二">大二</option>
+                            <option value="大三">大三</option>
+                            <option value="大四">大四</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentId">学号 *</label>
+                        <input type="text" id="studentId" name="studentId" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">邮箱 *</label>
+                        <input type="email" id="email" name="email" required placeholder="ustc 邮箱优先">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">手机号 *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="11 位手机号码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="skills">技能特长</label>
+                    <textarea id="skills" name="skills" rows="3" placeholder="编程语言、软件技能、竞赛经历等"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="motivation">申请理由 *</label>
+                    <textarea id="motivation" name="motivation" rows="4" required placeholder="请简述您对项目的兴趣和期望"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeApplicationForm()">取消</button>
+                    <button type="submit" class="btn-primary">提交申请</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- 联系我们 -->
     <section id="contact" class="section section-dark">

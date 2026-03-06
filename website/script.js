@@ -235,3 +235,95 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
 });
+
+// ===== 申请表格功能 =====
+
+// 打开申请表单
+function openApplicationForm() {
+    const modal = document.getElementById('applicationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// 关闭申请表单
+function closeApplicationForm() {
+    const modal = document.getElementById('applicationModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// 点击模态框外部关闭
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('applicationModal');
+    if (e.target === modal) {
+        closeApplicationForm();
+    }
+});
+
+// 提交申请
+function submitApplication(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('applicationForm');
+    const formData = new FormData(form);
+    
+    // 收集表单数据
+    const data = {
+        name: formData.get('name'),
+        gender: formData.get('gender'),
+        college: formData.get('college'),
+        major: formData.get('major'),
+        grade: formData.get('grade'),
+        studentId: formData.get('studentId'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        skills: formData.get('skills'),
+        motivation: formData.get('motivation')
+    };
+    
+    // 构建邮件内容
+    const subject = `行星探路者项目申请 - ${data.name} - ${data.college} - ${data.major}`;
+    const body = `【行星探路者项目申请】
+
+【基本信息】
+姓名：${data.name}
+性别：${data.gender}
+学院：${data.college}
+专业：${data.major}
+年级：${data.grade}
+学号：${data.studentId}
+
+【联系方式】
+邮箱：${data.email}
+手机：${data.phone}
+
+【技能特长】
+${data.skills || '无'}
+
+【申请理由】
+${data.motivation}
+
+---
+此邮件由行星探路者网站申请表单自动生成
+提交时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
+`;
+
+    // 使用 mailto 发送邮件（同时发送给 kaiyu 和 fengcq）
+    const mailtoLink = `mailto:kaiyu@mail.ustc.edu.cn,fengcq@ustc.edu.cn?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // 打开邮件客户端
+    window.location.href = mailtoLink;
+    
+    // 关闭模态框
+    closeApplicationForm();
+    
+    // 显示成功提示
+    alert('申请信息已准备发送！\n\n邮件将发送至：\n- kaiyu@mail.ustc.edu.cn\n- fengcq@ustc.edu.cn\n\n请在邮件客户端确认发送。');
+    
+    // 重置表单
+    form.reset();
+}
