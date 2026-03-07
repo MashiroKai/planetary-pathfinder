@@ -53,24 +53,47 @@ let confirmCallback = null;
 
 function initConfirmDialog() {
     const overlay = document.getElementById('confirmOverlay');
-    if (!overlay) return;
+    if (!overlay) {
+        console.log('[Dashboard] 确认对话框元素不存在');
+        return;
+    }
     
-    overlay.querySelector('.btn-cancel').addEventListener('click', hideConfirmDialog);
-    overlay.querySelector('.btn-confirm').addEventListener('click', () => {
-        if (confirmCallback) {
-            confirmCallback();
-            hideConfirmDialog();
-        }
-    });
+    const cancelBtn = overlay.querySelector('.btn-cancel');
+    const confirmBtn = overlay.querySelector('.btn-confirm');
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', hideConfirmDialog);
+    }
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+                hideConfirmDialog();
+            }
+        });
+    }
+    
+    console.log('[Dashboard] 确认对话框已初始化');
 }
 
 function showConfirmDialog(title, message, onConfirm, type = 'default') {
     confirmCallback = onConfirm;
     
     const overlay = document.getElementById('confirmOverlay');
+    if (!overlay) {
+        console.error('[Dashboard] 确认对话框不存在');
+        alert('错误：确认对话框未加载');
+        return;
+    }
+    
     const titleEl = overlay.querySelector('.confirm-title');
     const messageEl = overlay.querySelector('.confirm-message');
     const confirmBtn = overlay.querySelector('.btn-confirm');
+    
+    if (!titleEl || !messageEl || !confirmBtn) {
+        console.error('[Dashboard] 对话框元素缺失');
+        return;
+    }
     
     titleEl.textContent = title;
     messageEl.textContent = message;
