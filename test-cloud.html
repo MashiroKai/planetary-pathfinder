@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云端连接测试 - 行星探路者</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="cloud-config.js"></script>
+    <script src="cloud-storage.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0B1E3B 0%, #1a3a5c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: white;
+            padding: 20px;
+        }
+        .test-container {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .test-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+        }
+        .test-info {
+            flex: 1;
+        }
+        .test-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 5px;
+        }
+        .test-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status.success {
+            background: rgba(34,197,94,0.2);
+            color: #22c55e;
+        }
+        .status.error {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+        }
+        .status.pending {
+            background: rgba(251,191,36,0.2);
+            color: #fbbf24;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔗 云端连接测试</h1>
+        
+        <div class="test-item">
+            <div class="test-icon">🌐</div>
+            <div class="test-info">
+                <div class="test-label">Supabase URL</div>
+                <div class="test-value" id="urlValue">检查中...</div>
+            </div>
+            <div class="status pending" id="urlStatus">⏳ 检查中</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-icon">🔑</div>
+            <div class="test-info">
+                <div class="test-label">API Key</div>
+                <div class="test-value" id="keyValue">检查中...</div>
+            </div>
+            <div class="status pending" id="keyStatus">⏳ 检查中</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-icon">📊</div>
+            <div class="test-info">
+                <div class="test-label">数据库表</div>
+                <div class="test-value" id="tableValue">检查中...</div>
+            </div>
+            <div class="status pending" id="tableStatus">⏳ 检查中</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-icon">💾</div>
+            <div class="test-info">
+                <div class="test-label">数据读写</div>
+                <div class="test-value" id="rwValue">检查中...</div>
+            </div>
+            <div class="status pending" id="rwStatus">⏳ 检查中</div>
+        </div>
+
+        <button class="btn" id="testBtn" onclick="runTests()">运行完整测试</button>
+        
+        <a href="index.html" class="back-link">← 返回首页</a>
+    </div>
+
+    <script>
+        // 显示配置信息
+        document.getElementById('urlValue').textContent = SUPABASE_URL.replace(/https:\/\//, '').replace(/\.supabase\.co$/, '.supabase.co');
+        document.getElementById('keyValue').textContent = SUPABASE_KEY.substring(0, 20) + '...';
+
+        // 自动运行测试
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTests, 500);
+        });
+
+        async function runTests() {
+            const btn = document.getElementById('testBtn');
+            btn.disabled = true;
+            btn.textContent = '测试中...';
+
+            // 测试 1: URL 检查
+            if (SUPABASE_URL && SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co') {
+                document.getElementById('urlStatus').className = 'status success';
+                document.getElementById('urlStatus').textContent = '✓ 有效';
+            } else {
+                document.getElementById('urlStatus').className = 'status error';
+                document.getElementById('urlStatus').textContent = '✗ 无效';
+            }
+
+            // 测试 2: Key 检查
+            if (SUPABASE_KEY && SUPABASE_KEY !== 'YOUR_ANON_KEY' && SUPABASE_KEY.startsWith('eyJ')) {
+                document.getElementById('keyStatus').className = 'status success';
+                document.getElementById('keyStatus').textContent = '✓ 有效';
+            } else {
+                document.getElementById('keyStatus').className = 'status error';
+                document.getElementById('keyStatus').textContent = '✗ 无效';
+            }
+
+            // 测试 3: 数据库表检查
+            try {
+                const { data, error } = await supabase
+                    .from('applications')
+                    .select('id')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                document.getElementById('tableStatus').className = 'status success';
+                document.getElementById('tableStatus').textContent = '✓ 正常';
+                document.getElementById('tableValue').textContent = 'applications 表可访问';
+            } catch (err) {
+                document.getElementById('tableStatus').className = 'status error';
+                document.getElementById('tableStatus').textContent = '✗ 失败';
+                document.getElementById('tableValue').textContent = '表不存在或无权限';
+                console.error('表检查失败:', err);
+            }
+
+            // 测试 4: 读写测试
+            try {
+                const testData = {
+                    name: '测试用户_' + Date.now(),
+                    gender: '测试',
+                    college: '测试学院',
+                    major: '测试专业',
+                    grade: '测试',
+                    studentId: 'TEST001',
+                    email: 'test@example.com',
+                    phone: '123456789',
+                    skills: '测试',
+                    motivation: '这是一条测试数据，可以安全删除',
+                    submitTime: new Date().toISOString(),
+                    isTest: true
+                };
+
+                // 写入测试
+                const { data: insertData, error: insertError } = await supabase
+                    .from('applications')
+                    .insert([testData]);
+                
+                if (insertError) throw insertError;
+
+                // 读取测试
+                const { data: readData, error: readError } = await supabase
+                    .from('applications')
+                    .select('*')
+                    .eq('isTest', true)
+                    .order('submit_time', { ascending: false })
+                    .limit(1);
+                
+                if (readError) throw readError;
+
+                // 删除测试数据
+                await supabase
+                    .from('applications')
+                    .delete()
+                    .eq('isTest', true);
+
+                document.getElementById('rwStatus').className = 'status success';
+                document.getElementById('rwStatus').textContent = '✓ 正常';
+                document.getElementById('rwValue').textContent = '读写测试通过';
+
+                // 显示成功消息
+                setTimeout(() => {
+                    alert('✅ 所有测试通过！\n\n云端存储已就绪，可以正常使用。\n\n现在您可以：\n1. 访问 index.html 提交申请\n2. 访问 admin.html 管理后台\n3. 所有数据将自动同步到云端');
+                }, 500);
+
+            } catch (err) {
+                document.getElementById('rwStatus').className = 'status error';
+                document.getElementById('rwStatus').textContent = '✗ 失败';
+                document.getElementById('rwValue').textContent = '读写测试失败';
+                console.error('读写测试失败:', err);
+                
+                setTimeout(() => {
+                    alert('❌ 读写测试失败\n\n可能原因：\n1. 数据库表未创建\n2. 权限设置不正确\n3. API Key 无效\n\n请检查 CLOUD_SETUP.md 教程');
+                }, 500);
+            }
+
+            btn.disabled = false;
+            btn.textContent = '重新测试';
+        }
+    </script>
+</body>
+</html>
