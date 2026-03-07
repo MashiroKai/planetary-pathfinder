@@ -62,10 +62,18 @@ var CloudStorage = {
 
         try {
             var client = this.getClient();
+            
+            // 先尝试用 id 删除
             var result = await client.from('applications').delete().eq('id', id);
             
+            if (result.error) {
+                // 如果 id 删除失败，尝试用 name 删除
+                console.log('[Cloud] ID 删除失败，尝试用 name 删除:', id);
+                result = await client.from('applications').delete().eq('name', id);
+            }
+            
             if (result.error) throw result.error;
-            console.log('[Cloud] 已删除申请');
+            console.log('[Cloud] 已删除申请:', id);
             return { success: true };
         } catch (err) {
             console.error('[Cloud] 删除失败:', err.message);
@@ -124,6 +132,23 @@ var CloudStorage = {
         } catch (err) {
             console.error('[Cloud] 修改失败:', err.message);
             return { success: false, error: err };
+        }
+    },
+
+    getStats: async function() {
+        if (!this.isAvailable()) {
+            return null;
+        }
+
+        try {
+            var client = this.getClient();
+            var result = await client.from('applications').select('*', { count: 'exact', head: true });
+            
+            if (result.error) throw result.error;
+            return { total: result.count };
+        } catch (err) {
+            console.error('[Cloud] 获取统计失败:', err.message);
+            return null;
         }
     }
 };

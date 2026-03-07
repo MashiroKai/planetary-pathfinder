@@ -32,12 +32,10 @@ function showToast(message, type = 'info', duration = 3000) {
     
     container.appendChild(toast);
     
-    // 动画显示
     requestAnimationFrame(() => {
         toast.classList.add('show');
     });
     
-    // 自动隐藏
     if (duration > 0) {
         setTimeout(() => hideToast(toast), duration);
     }
@@ -50,54 +48,38 @@ function hideToast(toast) {
     setTimeout(() => toast.remove(), 300);
 }
 
-// ===== 确认对话框系统 =====
+// ===== 确认对话框 =====
 let confirmCallback = null;
 
 function initConfirmDialog() {
     const overlay = document.getElementById('confirmOverlay');
-    const cancelBtn = document.getElementById('confirmCancel');
-    const okBtn = document.getElementById('confirmOk');
-    
     if (!overlay) return;
     
-    cancelBtn.addEventListener('click', () => {
-        hideConfirmDialog();
-    });
-    
-    okBtn.addEventListener('click', () => {
+    overlay.querySelector('.btn-cancel').addEventListener('click', hideConfirmDialog);
+    overlay.querySelector('.btn-confirm').addEventListener('click', () => {
         if (confirmCallback) {
             confirmCallback();
-        }
-        hideConfirmDialog();
-    });
-    
-    // 点击遮罩关闭
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
             hideConfirmDialog();
         }
     });
 }
 
-function showConfirmDialog(title, message, callback, type = 'warning') {
+function showConfirmDialog(title, message, onConfirm, type = 'default') {
+    confirmCallback = onConfirm;
+    
     const overlay = document.getElementById('confirmOverlay');
-    const iconEl = document.getElementById('confirmIcon');
-    const titleEl = document.getElementById('confirmTitle');
-    const messageEl = document.getElementById('confirmMessage');
-    
-    confirmCallback = callback;
-    
-    // 设置图标
-    if (type === 'danger') {
-        iconEl.className = 'confirm-icon danger';
-        iconEl.textContent = '🗑️';
-    } else {
-        iconEl.className = 'confirm-icon warning';
-        iconEl.textContent = '⚠️';
-    }
+    const titleEl = overlay.querySelector('.confirm-title');
+    const messageEl = overlay.querySelector('.confirm-message');
+    const confirmBtn = overlay.querySelector('.btn-confirm');
     
     titleEl.textContent = title;
     messageEl.textContent = message;
+    
+    if (type === 'danger') {
+        confirmBtn.style.background = '#dc3545';
+    } else {
+        confirmBtn.style.background = '';
+    }
     
     overlay.style.display = 'flex';
     requestAnimationFrame(() => {
@@ -114,6 +96,8 @@ function hideConfirmDialog() {
     }, 200);
 }
 
+// ===== 主功能 =====
+
 // 加载仪表板
 async function loadDashboard() {
     const user = localStorage.getItem('adminUser');
@@ -122,29 +106,26 @@ async function loadDashboard() {
     }
     await loadApplications();
     await loadAdmins();
-    updateStats();
+    await updateStats();
 }
 
-// 加载申请数据
+// 加载申请数据（云端优先）
 async function loadApplications() {
+    console.log('[Dashboard] 加载申请数据...');
+    
     // 优先从云端获取
     if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        console.log('[Dashboard] 从云端获取申请...');
         const cloudApps = await CloudStorage.getApplications();
-        if (cloudApps) {
+        if (cloudApps !== null) {
+            console.log('[Dashboard] 云端获取到', cloudApps.length, '条申请');
             renderApplications(cloudApps);
             return;
         }
     }
     
-    // 从 API 获取
-    try {
-        const res = await fetch('/api/admin/applications');
-        const data = await res.json();
-        renderApplications(data.applications || []);
-        return;
-    } catch (err) {}
-    
-    // 降级到本地存储
+    // 降级到本地
+    console.log('[Dashboard] 从本地获取申请...');
     const apps = JSON.parse(localStorage.getItem('applications') || '[]');
     renderApplications(apps);
 }
@@ -180,7 +161,7 @@ function renderApplications(applications) {
     `;
     
     applications.forEach((app, index) => {
-        const appId = app.id || index;  // 云端 ID 或本地索引
+        const appId = app.id || app.name || index;
         html += `
             <tr>
                 <td>${app.name || '-'}</td>
@@ -189,9 +170,9 @@ function renderApplications(applications) {
                 <td>${app.grade || '-'}</td>
                 <td>${app.email || '-'}</td>
                 <td>${app.phone || '-'}</td>
-                <td>${formatDate(app.submitTime)}</td>
+                <td>${formatDate(app.submit_time || app.submitTime)}</td>
                 <td>
-                    <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index}, ${appId})">🗑️ 删除</button>
+                    <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index}, '${appId}')">🗑️ 删除</button>
                 </td>
             </tr>
         `;
@@ -201,25 +182,34 @@ function renderApplications(applications) {
     container.innerHTML = html;
 }
 
-// 加载管理员列表
+// 加载管理员列表（云端优先）
 async function loadAdmins() {
-    try {
-        const res = await fetch('/api/admin/admins');
-        const data = await res.json();
-        renderAdmins(data.admins || []);
-    } catch (err) {
-        // 演示模式：检查是否已有管理员，没有则创建默认账号（静默，不显示提示）
-        let admins = JSON.parse(localStorage.getItem('admins') || '[]');
-        if (admins.length === 0) {
-            admins = [{
-                username: 'admin',
-                password: 'admin123',
-                createdAt: new Date().toISOString()
-            }];
-            localStorage.setItem('admins', JSON.stringify(admins));
+    console.log('[Dashboard] 加载管理员列表...');
+    
+    // 优先从云端获取
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        console.log('[Dashboard] 从云端获取管理员...');
+        try {
+            const client = CloudStorage.getClient();
+            const { data, error } = await client.from('admins').select('*').order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('[Dashboard] 云端获取管理员失败:', error);
+                throw error;
+            }
+            
+            console.log('[Dashboard] 云端获取到', data.length, '个管理员');
+            renderAdmins(data || []);
+            return;
+        } catch (err) {
+            console.error('[Dashboard] 云端获取失败，降级到本地:', err);
         }
-        renderAdmins(admins);
     }
+    
+    // 降级到本地
+    console.log('[Dashboard] 从本地获取管理员...');
+    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+    renderAdmins(admins);
 }
 
 // 渲染管理员列表
@@ -247,11 +237,11 @@ function renderAdmins(admins) {
             <tbody>
     `;
     
-    admins.forEach((admin, index) => {
+    admins.forEach((admin) => {
         html += `
             <tr>
                 <td>${admin.username}</td>
-                <td>${formatDate(admin.createdAt)}</td>
+                <td>${formatDate(admin.created_at || admin.createdAt)}</td>
                 <td>
                     ${admin.username !== 'admin' ? `<button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;" onclick="deleteAdmin('${admin.username}')">删除</button>` : '-'}
                 </td>
@@ -263,8 +253,40 @@ function renderAdmins(admins) {
     container.innerHTML = html;
 }
 
-// 更新统计
-function updateStats() {
+// 更新统计（云端优先）
+async function updateStats() {
+    console.log('[Dashboard] 更新统计...');
+    
+    // 优先从云端获取
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        try {
+            const client = CloudStorage.getClient();
+            
+            // 获取申请数
+            const { count: appCount } = await client.from('applications').select('*', { count: 'exact', head: true });
+            
+            // 获取管理员数
+            const { count: adminCount } = await client.from('admins').select('*', { count: 'exact', head: true });
+            
+            // 获取今日申请
+            const today = new Date().toISOString().split('T')[0];
+            const { count: todayCount } = await client
+                .from('applications')
+                .select('*', { count: 'exact', head: true })
+                .gte('submit_time', today);
+            
+            document.getElementById('totalApplications').textContent = appCount || 0;
+            document.getElementById('todayApplications').textContent = todayCount || 0;
+            document.getElementById('totalAdmins').textContent = adminCount || 1;
+            
+            console.log('[Dashboard] 统计更新完成：申请=' + (appCount || 0) + ', 今日=' + (todayCount || 0) + ', 管理员=' + (adminCount || 1));
+            return;
+        } catch (err) {
+            console.error('[Dashboard] 云端统计失败:', err);
+        }
+    }
+    
+    // 降级到本地
     const applications = JSON.parse(localStorage.getItem('applications') || '[]');
     const admins = JSON.parse(localStorage.getItem('admins') || '[]');
     
@@ -300,10 +322,11 @@ function exportData() {
 }
 
 // 刷新数据
-function refreshData() {
-    loadApplications();
-    loadAdmins();
-    updateStats();
+async function refreshData() {
+    showToast('正在刷新...', 'info', 1000);
+    await loadApplications();
+    await loadAdmins();
+    await updateStats();
     showToast('✓ 数据已刷新', 'success', 2000);
 }
 
@@ -339,20 +362,23 @@ function closeAddAdminModal() {
     }, 200);
 }
 
-// 添加管理员
+// 添加管理员（云端同步）
 async function handleAddAdmin(event) {
     event.preventDefault();
     
     const username = document.getElementById('newAdminUsername').value;
     const password = document.getElementById('newAdminPassword').value;
     
-    // 优先使用云端添加
+    console.log('[Dashboard] 添加管理员:', username);
+    
+    // 优先使用云端
     if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
         const result = await CloudStorage.addAdmin(username, password);
         if (result.success) {
             showToast('✓ 管理员添加成功', 'success', 2500);
             closeAddAdminModal();
-            loadAdmins();
+            await loadAdmins();
+            await updateStats();
             return;
         } else {
             showToast(result.error?.message || '添加失败', 'error', 3000);
@@ -360,27 +386,7 @@ async function handleAddAdmin(event) {
         }
     }
     
-    // 尝试 API
-    try {
-        const res = await fetch('/api/admin/admins', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            showToast('✓ 管理员添加成功', 'success', 2500);
-            closeAddAdminModal();
-            loadAdmins();
-            return;
-        } else {
-            showToast(data.message || '添加失败', 'error', 3000);
-            return;
-        }
-    } catch (err) {}
-    
-    // 降级到本地存储
+    // 降级到本地
     const admins = JSON.parse(localStorage.getItem('admins') || '[]');
     if (admins.some(a => a.username === username)) {
         showToast('用户名已存在', 'error', 3000);
@@ -391,36 +397,45 @@ async function handleAddAdmin(event) {
     
     showToast('✓ 管理员添加成功', 'success', 2500);
     closeAddAdminModal();
-    loadAdmins();
+    await loadAdmins();
+    await updateStats();
 }
 
-// 删除管理员
+// 删除管理员（云端同步）
 async function deleteAdmin(username) {
     showConfirmDialog(
         '删除管理员',
         `确定要删除管理员 "${username}" 吗？此操作不可恢复。`,
         async () => {
-            try {
-                const res = await fetch(`/api/admin/admins/${encodeURIComponent(username)}`, {
-                    method: 'DELETE'
-                });
-                const data = await res.json();
-                
-                if (data.success) {
+            console.log('[Dashboard] 删除管理员:', username);
+            
+            // 优先使用云端
+            if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+                try {
+                    const client = CloudStorage.getClient();
+                    const { error } = await client.from('admins').delete().eq('username', username);
+                    
+                    if (error) throw error;
+                    
                     showToast('✓ 管理员已删除', 'success', 2000);
-                    loadAdmins();
-                } else {
-                    showToast(data.message || '删除失败', 'error', 3000);
+                    await loadAdmins();
+                    await updateStats();
+                    return;
+                } catch (err) {
+                    console.error('[Dashboard] 云端删除失败:', err);
+                    showToast('删除失败：' + err.message, 'error', 3000);
+                    return;
                 }
-            } catch (err) {
-                // 演示模式
-                let admins = JSON.parse(localStorage.getItem('admins') || '[]');
-                admins = admins.filter(a => a.username !== username);
-                localStorage.setItem('admins', JSON.stringify(admins));
-                
-                showToast('✓ 管理员已删除', 'success', 2000);
-                loadAdmins();
             }
+            
+            // 降级到本地
+            let admins = JSON.parse(localStorage.getItem('admins') || '[]');
+            admins = admins.filter(a => a.username !== username);
+            localStorage.setItem('admins', JSON.stringify(admins));
+            
+            showToast('✓ 管理员已删除', 'success', 2000);
+            await loadAdmins();
+            await updateStats();
         },
         'danger'
     );
@@ -433,19 +448,47 @@ function handleLogout() {
     window.location.href = 'admin.html';
 }
 
-// 删除申请
+// 删除申请（云端同步删除）
 async function deleteApplication(index, appId) {
     showConfirmDialog(
         '删除申请信息',
         '确定要删除这条申请信息吗？此操作不可恢复。',
         async () => {
-            // 优先从云端删除
-            if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable() && appId) {
-                const result = await CloudStorage.deleteApplication(appId);
-                if (result.success) {
-                    showToast('✓ 申请已删除', 'success', 2000);
-                    loadApplications();
-                    updateStats();
+            console.log('[Dashboard] 删除申请:', appId);
+            
+            // 优先使用云端删除
+            if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+                try {
+                    const result = await CloudStorage.deleteApplication(appId);
+                    if (result.success) {
+                        showToast('✓ 申请已删除', 'success', 2000);
+                        await loadApplications();
+                        await updateStats();
+                        return;
+                    } else {
+                        throw new Error(result.error?.message || '删除失败');
+                    }
+                } catch (err) {
+                    console.error('[Dashboard] 云端删除失败:', err);
+                    
+                    // 如果是因为列名问题，尝试用 name 删除
+                    if (err.message && err.message.indexOf('is_test') === -1) {
+                        try {
+                            const client = CloudStorage.getClient();
+                            const { error } = await client.from('applications').delete().eq('name', appId);
+                            
+                            if (error) throw error;
+                            
+                            showToast('✓ 申请已删除', 'success', 2000);
+                            await loadApplications();
+                            await updateStats();
+                            return;
+                        } catch (err2) {
+                            console.error('[Dashboard] 备用删除也失败:', err2);
+                        }
+                    }
+                    
+                    showToast('删除失败：' + err.message, 'error', 3000);
                     return;
                 }
             }
@@ -456,8 +499,8 @@ async function deleteApplication(index, appId) {
             localStorage.setItem('applications', JSON.stringify(applications));
             
             showToast('✓ 申请已删除', 'success', 2000);
-            loadApplications();
-            updateStats();
+            await loadApplications();
+            await updateStats();
         },
         'danger'
     );
@@ -484,7 +527,7 @@ function closeChangePasswordModal() {
     }, 200);
 }
 
-// 修改密码
+// 修改密码（云端同步）
 async function handleChangePassword(event) {
     event.preventDefault();
     
@@ -505,7 +548,7 @@ async function handleChangePassword(event) {
     
     const currentUser = localStorage.getItem('adminUser');
     
-    // 优先使用云端修改密码
+    // 优先使用云端
     if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
         // 先验证当前密码
         const validateResult = await CloudStorage.validateAdmin(currentUser, currentPassword);
@@ -526,7 +569,7 @@ async function handleChangePassword(event) {
         }
     }
     
-    // 降级到本地验证和修改
+    // 降级到本地
     const admins = JSON.parse(localStorage.getItem('admins') || '[]');
     const admin = admins.find(a => a.username === currentUser);
     
@@ -557,13 +600,11 @@ function formatDate(isoString) {
 
 // OpenClaw API 接口调用
 window.openclawAPI = {
-    // 获取所有申请
     getApplications: async () => {
         const apps = JSON.parse(localStorage.getItem('applications') || '[]');
         return apps;
     },
     
-    // 获取统计数据
     getStats: async () => {
         const apps = JSON.parse(localStorage.getItem('applications') || '[]');
         return {
@@ -572,7 +613,6 @@ window.openclawAPI = {
         };
     },
     
-    // 导出数据
     exportData: async () => {
         return JSON.parse(localStorage.getItem('applications') || '[]');
     }
