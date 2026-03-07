@@ -65,11 +65,13 @@ function initConfirmDialog() {
         cancelBtn.addEventListener('click', hideConfirmDialog);
     }
     if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
+        confirmBtn.addEventListener('click', function() {
+            console.log('[Dashboard] 确认按钮被点击');
             if (confirmCallback) {
+                console.log('[Dashboard] 执行回调函数');
                 confirmCallback();
-                hideConfirmDialog();
             }
+            hideConfirmDialog();
         });
     }
     
@@ -322,19 +324,48 @@ async function updateStats() {
     document.getElementById('totalAdmins').textContent = admins.length;
 }
 
-// 导出数据
-function exportData() {
-    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+// 导出数据（只导出云端数据）
+async function exportData() {
+    console.log('[Dashboard] 开始导出 CSV...');
     
+    // 优先从云端获取数据
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        try {
+            const client = CloudStorage.getClient();
+            const { data, error } = await client.from('applications').select('*').order('submit_time', { ascending: false });
+            
+            if (error) throw error;
+            
+            if (!data || data.length === 0) {
+                alert('暂无数据可导出');
+                return;
+            }
+            
+            console.log('[Dashboard] 云端获取到', data.length, '条数据');
+            generateCSV(data);
+            return;
+        } catch (err) {
+            console.error('[Dashboard] 云端导出失败:', err);
+        }
+    }
+    
+    // 降级到本地
+    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
     if (applications.length === 0) {
         alert('暂无数据可导出');
         return;
     }
     
+    console.log('[Dashboard] 从本地导出', applications.length, '条数据');
+    generateCSV(applications);
+}
+
+// 生成 CSV 文件
+function generateCSV(applications) {
     let csv = '\uFEFF 姓名，性别，学院，专业，年级，学号，邮箱，手机，技能特长，申请理由，提交时间\n';
     
     applications.forEach(app => {
-        csv += `"${app.name || ''}","${app.gender || ''}","${app.college || ''}","${app.major || ''}","${app.grade || ''}","${app.studentId || ''}","${app.email || ''}","${app.phone || ''}","${(app.skills || '').replace(/"/g, '""')}","${(app.motivation || '').replace(/"/g, '""')}","${app.submitTime || ''}"\n`;
+        csv += `"${app.name || ''}","${app.gender || ''}","${app.college || ''}","${app.major || ''}","${app.grade || ''}","${app.student_id || ''}","${app.email || ''}","${app.phone || ''}","${(app.skills || '').replace(/"/g, '""')}","${(app.motivation || '').replace(/"/g, '""')}","${app.submit_time || ''}"\n`;
     });
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -342,6 +373,7 @@ function exportData() {
     link.href = URL.createObjectURL(blob);
     link.download = `报名数据_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
+    console.log('[Dashboard] CSV 导出完成');
 }
 
 // 刷新数据
