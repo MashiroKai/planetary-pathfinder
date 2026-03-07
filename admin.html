@@ -112,69 +112,60 @@
             </form>
         </div>
     </div>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 云端存储配置 -->
+    <script src="cloud-config.js"></script>
+    <script src="cloud-storage.js"></script>
+    
     <script>
         // 检查是否已登录
         if (localStorage.getItem('adminToken')) {
             window.location.href = 'dashboard.html';
         }
 
-        // 检查是否需要初始化默认管理员
-        checkDefaultAdmin();
-
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            fetch('/api/admin/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
+            // 优先使用云端验证
+            if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+                const result = await CloudStorage.validateAdmin(username, password);
+                if (result.success) {
+                    localStorage.setItem('adminToken', 'cloud-token');
+                    localStorage.setItem('adminUser', username);
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+            }
+            
+            // 尝试 API 验证
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
                 if (data.success) {
                     localStorage.setItem('adminToken', data.token);
-                    localStorage.setItem('adminUser', data.username);
+                    localStorage.setItem('adminUser', username);
                     window.location.href = 'dashboard.html';
-                } else {
-                    document.getElementById('errorMsg').style.display = 'block';
+                    return;
                 }
-            })
-            .catch(err => {
-                // 演示模式：检查本地存储的管理员账号
-                const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-                const admin = admins.find(a => a.username === username && a.password === password);
-                
-                if (admin) {
-                    localStorage.setItem('adminToken', 'demo-token');
-                    localStorage.setItem('adminUser', admin.username);
-                    window.location.href = 'dashboard.html';
-                } else {
-                    document.getElementById('errorMsg').style.display = 'block';
-                }
-            });
-        }
-
-        // 检查并显示默认管理员账号提示
-        function checkDefaultAdmin() {
+            } catch (err) {}
+            
+            // 降级到本地验证
             const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-            if (admins.length === 0) {
-                // 首次访问，创建默认账号并显示提示
-                const defaultAdmin = {
-                    username: 'admin',
-                    password: 'admin123',
-                    createdAt: new Date().toISOString(),
-                    isDefault: true
-                };
-                admins.push(defaultAdmin);
-                localStorage.setItem('admins', JSON.stringify(admins));
-                
-                // 显示提示信息
-                const infoBox = document.createElement('div');
-                infoBox.style.cssText = 'background: rgba(255,107,53,0.15); border: 1px solid var(--accent); border-radius: 8px; padding: 15px; margin-top: 20px; color: #fff; font-size: 13px;';
-                infoBox.innerHTML = '<strong>⚠️ 首次登录提示</strong><br>默认管理员账号已创建<br>用户名：<code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;">admin</code> 密码：<code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:3px;">admin123</code><br>登录后请及时修改密码！';
-                document.querySelector('.admin-login-box').appendChild(infoBox);
+            const admin = admins.find(a => a.username === username && a.password === password);
+            
+            if (admin) {
+                localStorage.setItem('adminToken', 'demo-token');
+                localStorage.setItem('adminUser', username);
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
             }
         }
     </script>

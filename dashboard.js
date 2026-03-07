@@ -127,15 +127,26 @@ async function loadDashboard() {
 
 // 加载申请数据
 async function loadApplications() {
+    // 优先从云端获取
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        const cloudApps = await CloudStorage.getApplications();
+        if (cloudApps) {
+            renderApplications(cloudApps);
+            return;
+        }
+    }
+    
+    // 从 API 获取
     try {
         const res = await fetch('/api/admin/applications');
         const data = await res.json();
         renderApplications(data.applications || []);
-    } catch (err) {
-        // 演示模式：使用本地存储
-        const apps = JSON.parse(localStorage.getItem('applications') || '[]');
-        renderApplications(apps);
-    }
+        return;
+    } catch (err) {}
+    
+    // 降级到本地存储
+    const apps = JSON.parse(localStorage.getItem('applications') || '[]');
+    renderApplications(apps);
 }
 
 // 渲染申请列表
@@ -169,6 +180,7 @@ function renderApplications(applications) {
     `;
     
     applications.forEach((app, index) => {
+        const appId = app.id || index;  // 云端 ID 或本地索引
         html += `
             <tr>
                 <td>${app.name || '-'}</td>
@@ -179,7 +191,7 @@ function renderApplications(applications) {
                 <td>${app.phone || '-'}</td>
                 <td>${formatDate(app.submitTime)}</td>
                 <td>
-                    <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index})">🗑️ 删除</button>
+                    <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index}, ${appId})">🗑️ 删除</button>
                 </td>
             </tr>
         `;
@@ -196,18 +208,15 @@ async function loadAdmins() {
         const data = await res.json();
         renderAdmins(data.admins || []);
     } catch (err) {
-        // 演示模式：检查是否已有管理员，没有则创建默认账号
+        // 演示模式：检查是否已有管理员，没有则创建默认账号（静默，不显示提示）
         let admins = JSON.parse(localStorage.getItem('admins') || '[]');
         if (admins.length === 0) {
-            // 创建默认管理员账号：admin / admin123
             admins = [{
                 username: 'admin',
                 password: 'admin123',
-                createdAt: new Date().toISOString(),
-                isDefault: true
+                createdAt: new Date().toISOString()
             }];
             localStorage.setItem('admins', JSON.stringify(admins));
-            console.log('[PathFinder] 已创建默认管理员账号：admin / admin123');
         }
         renderAdmins(admins);
     }
@@ -337,6 +346,21 @@ async function handleAddAdmin(event) {
     const username = document.getElementById('newAdminUsername').value;
     const password = document.getElementById('newAdminPassword').value;
     
+    // 优先使用云端添加
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        const result = await CloudStorage.addAdmin(username, password);
+        if (result.success) {
+            showToast('✓ 管理员添加成功', 'success', 2500);
+            closeAddAdminModal();
+            loadAdmins();
+            return;
+        } else {
+            showToast(result.error?.message || '添加失败', 'error', 3000);
+            return;
+        }
+    }
+    
+    // 尝试 API
     try {
         const res = await fetch('/api/admin/admins', {
             method: 'POST',
@@ -349,24 +373,25 @@ async function handleAddAdmin(event) {
             showToast('✓ 管理员添加成功', 'success', 2500);
             closeAddAdminModal();
             loadAdmins();
+            return;
         } else {
             showToast(data.message || '添加失败', 'error', 3000);
-        }
-    } catch (err) {
-        // 演示模式
-        const admins = JSON.parse(localStorage.getItem('admins') || '[]');
-        // 检查是否已存在
-        if (admins.some(a => a.username === username)) {
-            showToast('用户名已存在', 'error', 3000);
             return;
         }
-        admins.push({ username, password, createdAt: new Date().toISOString() });
-        localStorage.setItem('admins', JSON.stringify(admins));
-        
-        showToast('✓ 管理员添加成功', 'success', 2500);
-        closeAddAdminModal();
-        loadAdmins();
+    } catch (err) {}
+    
+    // 降级到本地存储
+    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+    if (admins.some(a => a.username === username)) {
+        showToast('用户名已存在', 'error', 3000);
+        return;
     }
+    admins.push({ username, password, createdAt: new Date().toISOString() });
+    localStorage.setItem('admins', JSON.stringify(admins));
+    
+    showToast('✓ 管理员添加成功', 'success', 2500);
+    closeAddAdminModal();
+    loadAdmins();
 }
 
 // 删除管理员
@@ -409,11 +434,23 @@ function handleLogout() {
 }
 
 // 删除申请
-function deleteApplication(index) {
+async function deleteApplication(index, appId) {
     showConfirmDialog(
         '删除申请信息',
         '确定要删除这条申请信息吗？此操作不可恢复。',
-        () => {
+        async () => {
+            // 优先从云端删除
+            if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable() && appId) {
+                const result = await CloudStorage.deleteApplication(appId);
+                if (result.success) {
+                    showToast('✓ 申请已删除', 'success', 2000);
+                    loadApplications();
+                    updateStats();
+                    return;
+                }
+            }
+            
+            // 降级到本地删除
             const applications = JSON.parse(localStorage.getItem('applications') || '[]');
             applications.splice(index, 1);
             localStorage.setItem('applications', JSON.stringify(applications));
@@ -448,7 +485,7 @@ function closeChangePasswordModal() {
 }
 
 // 修改密码
-function handleChangePassword(event) {
+async function handleChangePassword(event) {
     event.preventDefault();
     
     const currentPassword = document.getElementById('currentPassword').value;
@@ -466,8 +503,30 @@ function handleChangePassword(event) {
         return;
     }
     
-    // 验证当前密码
     const currentUser = localStorage.getItem('adminUser');
+    
+    // 优先使用云端修改密码
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        // 先验证当前密码
+        const validateResult = await CloudStorage.validateAdmin(currentUser, currentPassword);
+        if (!validateResult.success) {
+            showToast('❌ 当前密码错误', 'error', 3000);
+            return;
+        }
+        
+        // 修改密码
+        const result = await CloudStorage.updatePassword(currentUser, newPassword);
+        if (result.success) {
+            closeChangePasswordModal();
+            showToast('✓ 密码修改成功', 'success', 2500);
+            return;
+        } else {
+            showToast(result.error?.message || '修改失败', 'error', 3000);
+            return;
+        }
+    }
+    
+    // 降级到本地验证和修改
     const admins = JSON.parse(localStorage.getItem('admins') || '[]');
     const admin = admins.find(a => a.username === currentUser);
     
@@ -476,7 +535,6 @@ function handleChangePassword(event) {
         return;
     }
     
-    // 更新密码
     admin.password = newPassword;
     localStorage.setItem('admins', JSON.stringify(admins));
     

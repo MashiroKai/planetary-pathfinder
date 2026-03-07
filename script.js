@@ -279,7 +279,7 @@ window.addEventListener('click', (e) => {
 });
 
 // 提交申请
-function submitApplication(event) {
+async function submitApplication(event) {
     event.preventDefault();
     
     const form = document.getElementById('applicationForm');
@@ -297,23 +297,34 @@ function submitApplication(event) {
         email: formData.get('email'),
         phone: formData.get('phone'),
         skills: formData.get('skills'),
-        motivation: formData.get('motivation')
+        motivation: formData.get('motivation'),
+        submitTime: new Date().toISOString()
     };
     
-    // 添加提交时间
-    data.submitTime = new Date().toISOString();
+    // 优先保存到云端
+    let savedToCloud = false;
+    if (typeof CloudStorage !== 'undefined') {
+        const cloudResult = await CloudStorage.saveApplication(data);
+        if (cloudResult.success) {
+            savedToCloud = true;
+            console.log('[PathFinder] 申请已同步到云端');
+        }
+    }
     
-    // 保存到本地存储（后台系统）
-    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
-    applications.push(data);
-    localStorage.setItem('applications', JSON.stringify(applications));
+    // 同时保存到本地（作为备份）
+    if (!savedToCloud) {
+        const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+        applications.push(data);
+        localStorage.setItem('applications', JSON.stringify(applications));
+        console.log('[PathFinder] 申请已保存到本地');
+    }
     
     // 发送到 API（如果有后端）
     fetch('/api/admin/applications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-    }).catch(err => console.log('API 不可用，已保存到本地存储'));
+    }).catch(err => {});
     
     // 隐藏表单，显示成功提示
     form.style.display = 'none';
