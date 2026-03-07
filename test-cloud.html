@@ -166,10 +166,22 @@
 
         // 自动运行测试
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(runTests, 500);
+            console.log('[Test] 页面加载完成');
+            console.log('[Test] CLOUD_ENABLED:', CLOUD_ENABLED);
+            console.log('[Test] SUPABASE_URL:', SUPABASE_URL);
+            console.log('[Test] SUPABASE_KEY:', SUPABASE_KEY ? '已配置' : '未配置');
+            
+            // 检查 Supabase SDK 是否加载
+            if (typeof window.supabase === 'undefined') {
+                alert('❌ Supabase SDK 未加载\n\n请检查网络连接，或刷新页面重试');
+                return;
+            }
+            
+            setTimeout(runTests, 300);
         });
 
         async function runTests() {
+            console.log('[Test] 开始运行测试...');
             const btn = document.getElementById('testBtn');
             btn.disabled = true;
             btn.textContent = '测试中...';
@@ -183,8 +195,8 @@
                 document.getElementById('urlStatus').textContent = '✗ 无效';
             }
 
-            // 测试 2: Key 检查
-            if (SUPABASE_KEY && SUPABASE_KEY !== 'YOUR_ANON_KEY' && SUPABASE_KEY.startsWith('eyJ')) {
+            // 测试 2: Key 检查（支持 Publishable key 格式）
+            if (SUPABASE_KEY && SUPABASE_KEY !== 'YOUR_ANON_KEY' && (SUPABASE_KEY.startsWith('eyJ') || SUPABASE_KEY.startsWith('sb_'))) {
                 document.getElementById('keyStatus').className = 'status success';
                 document.getElementById('keyStatus').textContent = '✓ 有效';
             } else {
@@ -192,27 +204,33 @@
                 document.getElementById('keyStatus').textContent = '✗ 无效';
             }
 
-            // 测试 3: 数据库表检查
+            // 测试 3: 数据库表检查（带超时）
             try {
-                const { data, error } = await supabase
-                    .from('applications')
-                    .select('id')
-                    .limit(1);
+                console.log('[Test] 检查数据库表...');
+                const { data, error } = await Promise.race([
+                    supabase.from('applications').select('id').limit(1),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 10000))
+                ]);
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('[Test] 表检查错误:', error);
+                    throw error;
+                }
                 
+                console.log('[Test] 数据库表检查通过');
                 document.getElementById('tableStatus').className = 'status success';
                 document.getElementById('tableStatus').textContent = '✓ 正常';
                 document.getElementById('tableValue').textContent = 'applications 表可访问';
             } catch (err) {
+                console.error('[Test] 表检查失败:', err.message);
                 document.getElementById('tableStatus').className = 'status error';
                 document.getElementById('tableStatus').textContent = '✗ 失败';
-                document.getElementById('tableValue').textContent = '表不存在或无权限';
-                console.error('表检查失败:', err);
+                document.getElementById('tableValue').textContent = err.message.includes('超时') ? '请求超时' : '表不存在或无权限';
             }
 
-            // 测试 4: 读写测试
+            // 测试 4: 读写测试（带超时）
             try {
+                console.log('[Test] 开始读写测试...');
                 const testData = {
                     name: '测试用户_' + Date.now(),
                     gender: '测试',
@@ -229,27 +247,35 @@
                 };
 
                 // 写入测试
-                const { data: insertData, error: insertError } = await supabase
-                    .from('applications')
-                    .insert([testData]);
+                console.log('[Test] 写入测试数据...');
+                const { data: insertData, error: insertError } = await Promise.race([
+                    supabase.from('applications').insert([testData]),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('写入超时')), 10000))
+                ]);
                 
-                if (insertError) throw insertError;
+                if (insertError) {
+                    console.error('[Test] 写入错误:', insertError);
+                    throw insertError;
+                }
+                console.log('[Test] 写入成功');
 
                 // 读取测试
-                const { data: readData, error: readError } = await supabase
-                    .from('applications')
-                    .select('*')
-                    .eq('isTest', true)
-                    .order('submit_time', { ascending: false })
-                    .limit(1);
+                console.log('[Test] 读取测试数据...');
+                const { data: readData, error: readError } = await Promise.race([
+                    supabase.from('applications').select('*').eq('isTest', true).order('submit_time', { ascending: false }).limit(1),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('读取超时')), 10000))
+                ]);
                 
-                if (readError) throw readError;
+                if (readError) {
+                    console.error('[Test] 读取错误:', readError);
+                    throw readError;
+                }
+                console.log('[Test] 读取成功，找到', readData?.length, '条记录');
 
                 // 删除测试数据
-                await supabase
-                    .from('applications')
-                    .delete()
-                    .eq('isTest', true);
+                console.log('[Test] 删除测试数据...');
+                await supabase.from('applications').delete().eq('isTest', true);
+                console.log('[Test] 删除成功');
 
                 document.getElementById('rwStatus').className = 'status success';
                 document.getElementById('rwStatus').textContent = '✓ 正常';
@@ -261,13 +287,13 @@
                 }, 500);
 
             } catch (err) {
+                console.error('[Test] 读写测试失败:', err.message);
                 document.getElementById('rwStatus').className = 'status error';
                 document.getElementById('rwStatus').textContent = '✗ 失败';
-                document.getElementById('rwValue').textContent = '读写测试失败';
-                console.error('读写测试失败:', err);
+                document.getElementById('rwValue').textContent = err.message.includes('超时') ? err.message : '读写测试失败';
                 
                 setTimeout(() => {
-                    alert('❌ 读写测试失败\n\n可能原因：\n1. 数据库表未创建\n2. 权限设置不正确\n3. API Key 无效\n\n请检查 CLOUD_SETUP.md 教程');
+                    alert('❌ 读写测试失败\n\n错误信息：' + err.message + '\n\n可能原因：\n1. 数据库表未创建\n2. 权限设置不正确\n3. API Key 无效\n\n请检查 CLOUD_SETUP.md 教程');
                 }, 500);
             }
 

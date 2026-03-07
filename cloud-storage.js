@@ -4,9 +4,21 @@
 const CloudStorage = {
     // 检查云端是否可用
     isAvailable() {
-        return CLOUD_ENABLED && 
+        const available = CLOUD_ENABLED && 
                SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co' && 
-               SUPABASE_KEY !== 'YOUR_ANON_KEY';
+               SUPABASE_KEY !== 'YOUR_ANON_KEY' &&
+               typeof window.supabase !== 'undefined';
+        
+        if (!available) {
+            console.log('[Cloud] 云端不可用:', {
+                CLOUD_ENABLED,
+                URL_CONFIGURED: SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co',
+                KEY_CONFIGURED: SUPABASE_KEY !== 'YOUR_ANON_KEY',
+                SDK_LOADED: typeof window.supabase !== 'undefined'
+            });
+        }
+        
+        return available;
     },
 
     // 保存申请到云端
