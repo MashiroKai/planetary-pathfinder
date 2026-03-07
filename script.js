@@ -241,8 +241,19 @@ window.addEventListener('load', () => {
 // 打开申请表单
 function openApplicationForm() {
     const modal = document.getElementById('applicationModal');
+    const form = document.getElementById('applicationForm');
+    const successView = document.getElementById('submitSuccess');
+    
     if (modal) {
+        // 重置状态
+        form.style.display = 'block';
+        form.reset();
+        successView.style.display = 'none';
+        
         modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+        });
         document.body.style.overflow = 'hidden';
     }
 }
@@ -251,8 +262,11 @@ function openApplicationForm() {
 function closeApplicationForm() {
     const modal = document.getElementById('applicationModal');
     if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 200);
     }
 }
 
@@ -269,6 +283,7 @@ function submitApplication(event) {
     event.preventDefault();
     
     const form = document.getElementById('applicationForm');
+    const successView = document.getElementById('submitSuccess');
     const formData = new FormData(form);
     
     // 收集表单数据
@@ -300,12 +315,7 @@ function submitApplication(event) {
         body: JSON.stringify(data)
     }).catch(err => console.log('API 不可用，已保存到本地存储'));
     
-    // 关闭模态框
-    closeApplicationForm();
-    
-    // 显示成功提示（简洁版，面向申请者）
-    alert('✅ 申请提交成功！');
-    
-    // 重置表单
-    form.reset();
+    // 隐藏表单，显示成功提示
+    form.style.display = 'none';
+    successView.style.display = 'block';
 }

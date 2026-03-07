@@ -317,7 +317,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeApplicationForm()">&times;</span>
             <h2>项目申请表</h2>
-            <p class="modal-subtitle">填写以下信息，申请表将发送至项目负责人邮箱</p>
+            <p class="modal-subtitle">填写以下信息，申请表将发送至项目负责人邮箱<br>我们将在 3-5 个工作日内回复</p>
             <form id="applicationForm" onsubmit="submitApplication(event)">
                 <div class="form-row">
                     <div class="form-group">
@@ -382,6 +382,14 @@
                     <button type="submit" class="btn-primary">提交申请</button>
                 </div>
             </form>
+            
+            <!-- 提交成功提示 -->
+            <div id="submitSuccess" style="display: none; text-align: center; padding: 40px 20px;">
+                <div style="width: 64px; height: 64px; margin: 0 auto 20px; background: rgba(90,125,90,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #7DA87D;">✓</div>
+                <h3 style="font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">申请已提交</h3>
+                <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">感谢您的申请！<br>我们将在 3-5 个工作日内通过邮件与您联系。</p>
+                <button class="btn-primary" onclick="closeApplicationForm()" style="margin-top: 24px;">关闭</button>
+            </div>
         </div>
     </div>
 

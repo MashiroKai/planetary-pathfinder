@@ -8,7 +8,111 @@ if (!localStorage.getItem('adminToken')) {
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     loadDashboard();
+    initConfirmDialog();
 });
+
+// ===== Toast 提示系统 =====
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+    
+    toast.innerHTML = `
+        <div class="toast-icon ${type}">${icons[type] || icons.info}</div>
+        <div class="toast-message">${message}</div>
+        <div class="toast-close" onclick="this.parentElement.remove()">&times;</div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // 动画显示
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+    
+    // 自动隐藏
+    if (duration > 0) {
+        setTimeout(() => hideToast(toast), duration);
+    }
+    
+    return toast;
+}
+
+function hideToast(toast) {
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 300);
+}
+
+// ===== 确认对话框系统 =====
+let confirmCallback = null;
+
+function initConfirmDialog() {
+    const overlay = document.getElementById('confirmOverlay');
+    const cancelBtn = document.getElementById('confirmCancel');
+    const okBtn = document.getElementById('confirmOk');
+    
+    if (!overlay) return;
+    
+    cancelBtn.addEventListener('click', () => {
+        hideConfirmDialog();
+    });
+    
+    okBtn.addEventListener('click', () => {
+        if (confirmCallback) {
+            confirmCallback();
+        }
+        hideConfirmDialog();
+    });
+    
+    // 点击遮罩关闭
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            hideConfirmDialog();
+        }
+    });
+}
+
+function showConfirmDialog(title, message, callback, type = 'warning') {
+    const overlay = document.getElementById('confirmOverlay');
+    const iconEl = document.getElementById('confirmIcon');
+    const titleEl = document.getElementById('confirmTitle');
+    const messageEl = document.getElementById('confirmMessage');
+    
+    confirmCallback = callback;
+    
+    // 设置图标
+    if (type === 'danger') {
+        iconEl.className = 'confirm-icon danger';
+        iconEl.textContent = '🗑️';
+    } else {
+        iconEl.className = 'confirm-icon warning';
+        iconEl.textContent = '⚠️';
+    }
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => {
+        overlay.classList.add('show');
+    });
+}
+
+function hideConfirmDialog() {
+    const overlay = document.getElementById('confirmOverlay');
+    overlay.classList.remove('show');
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        confirmCallback = null;
+    }, 200);
+}
 
 // 加载仪表板
 async function loadDashboard() {
@@ -191,7 +295,7 @@ function refreshData() {
     loadApplications();
     loadAdmins();
     updateStats();
-    alert('数据已刷新');
+    showToast('✓ 数据已刷新', 'success', 2000);
 }
 
 // 切换区块
@@ -208,14 +312,22 @@ function showSection(section) {
 
 // 显示添加管理员模态框
 function showAddAdminModal() {
-    document.getElementById('addAdminModal').style.display = 'flex';
+    const modal = document.getElementById('addAdminModal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('show');
+    });
 }
 
 // 关闭添加管理员模态框
 function closeAddAdminModal() {
-    document.getElementById('addAdminModal').style.display = 'none';
-    document.getElementById('newAdminUsername').value = '';
-    document.getElementById('newAdminPassword').value = '';
+    const modal = document.getElementById('addAdminModal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('newAdminUsername').value = '';
+        document.getElementById('newAdminPassword').value = '';
+    }, 200);
 }
 
 // 添加管理员
@@ -234,19 +346,24 @@ async function handleAddAdmin(event) {
         const data = await res.json();
         
         if (data.success) {
-            alert('管理员添加成功');
+            showToast('✓ 管理员添加成功', 'success', 2500);
             closeAddAdminModal();
             loadAdmins();
         } else {
-            alert(data.message || '添加失败');
+            showToast(data.message || '添加失败', 'error', 3000);
         }
     } catch (err) {
         // 演示模式
         const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+        // 检查是否已存在
+        if (admins.some(a => a.username === username)) {
+            showToast('用户名已存在', 'error', 3000);
+            return;
+        }
         admins.push({ username, password, createdAt: new Date().toISOString() });
         localStorage.setItem('admins', JSON.stringify(admins));
         
-        alert('管理员添加成功');
+        showToast('✓ 管理员添加成功', 'success', 2500);
         closeAddAdminModal();
         loadAdmins();
     }
@@ -254,27 +371,34 @@ async function handleAddAdmin(event) {
 
 // 删除管理员
 async function deleteAdmin(username) {
-    if (!confirm(`确定要删除管理员 "${username}" 吗？`)) return;
-    
-    try {
-        const res = await fetch(`/api/admin/admins/${encodeURIComponent(username)}`, {
-            method: 'DELETE'
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            loadAdmins();
-        } else {
-            alert(data.message || '删除失败');
-        }
-    } catch (err) {
-        // 演示模式
-        let admins = JSON.parse(localStorage.getItem('admins') || '[]');
-        admins = admins.filter(a => a.username !== username);
-        localStorage.setItem('admins', JSON.stringify(admins));
-        
-        loadAdmins();
-    }
+    showConfirmDialog(
+        '删除管理员',
+        `确定要删除管理员 "${username}" 吗？此操作不可恢复。`,
+        async () => {
+            try {
+                const res = await fetch(`/api/admin/admins/${encodeURIComponent(username)}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('✓ 管理员已删除', 'success', 2000);
+                    loadAdmins();
+                } else {
+                    showToast(data.message || '删除失败', 'error', 3000);
+                }
+            } catch (err) {
+                // 演示模式
+                let admins = JSON.parse(localStorage.getItem('admins') || '[]');
+                admins = admins.filter(a => a.username !== username);
+                localStorage.setItem('admins', JSON.stringify(admins));
+                
+                showToast('✓ 管理员已删除', 'success', 2000);
+                loadAdmins();
+            }
+        },
+        'danger'
+    );
 }
 
 // 退出登录
@@ -286,27 +410,41 @@ function handleLogout() {
 
 // 删除申请
 function deleteApplication(index) {
-    if (!confirm('确定要删除这条申请信息吗？此操作不可恢复。')) return;
-    
-    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
-    applications.splice(index, 1);
-    localStorage.setItem('applications', JSON.stringify(applications));
-    
-    loadApplications();
-    updateStats();
+    showConfirmDialog(
+        '删除申请信息',
+        '确定要删除这条申请信息吗？此操作不可恢复。',
+        () => {
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            applications.splice(index, 1);
+            localStorage.setItem('applications', JSON.stringify(applications));
+            
+            showToast('✓ 申请已删除', 'success', 2000);
+            loadApplications();
+            updateStats();
+        },
+        'danger'
+    );
 }
 
 // 显示修改密码模态框
 function showChangePasswordModal() {
-    document.getElementById('changePasswordModal').style.display = 'flex';
+    const modal = document.getElementById('changePasswordModal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('show');
+    });
 }
 
 // 关闭修改密码模态框
 function closeChangePasswordModal() {
-    document.getElementById('changePasswordModal').style.display = 'none';
-    document.getElementById('currentPassword').value = '';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
+    const modal = document.getElementById('changePasswordModal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }, 200);
 }
 
 // 修改密码
@@ -319,12 +457,12 @@ function handleChangePassword(event) {
     
     // 验证新密码
     if (newPassword !== confirmPassword) {
-        alert('❌ 两次输入的新密码不一致！');
+        showToast('❌ 两次输入的新密码不一致', 'error', 3000);
         return;
     }
     
     if (newPassword.length < 6) {
-        alert('❌ 密码长度不能少于 6 位！');
+        showToast('❌ 密码长度不能少于 6 位', 'error', 3000);
         return;
     }
     
@@ -334,7 +472,7 @@ function handleChangePassword(event) {
     const admin = admins.find(a => a.username === currentUser);
     
     if (!admin || admin.password !== currentPassword) {
-        alert('❌ 当前密码错误！');
+        showToast('❌ 当前密码错误', 'error', 3000);
         return;
     }
     
@@ -343,7 +481,7 @@ function handleChangePassword(event) {
     localStorage.setItem('admins', JSON.stringify(admins));
     
     closeChangePasswordModal();
-    alert('✅ 密码修改成功！');
+    showToast('✓ 密码修改成功', 'success', 2500);
 }
 
 // 格式化日期

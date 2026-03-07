@@ -1534,7 +1534,7 @@ body::after {
     }
 }
 
-/* ===== 申请表格模态框 ===== */
+/* ===== 模态框系统 - 方案 A 精致现代风 ===== */
 .modal {
     display: none;
     position: fixed;
@@ -1543,16 +1543,27 @@ body::after {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     align-items: center;
     justify-content: center;
     overflow-y: auto;
     padding: 20px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.modal.show {
+    opacity: 1;
 }
 
 .modal-content {
-    background: linear-gradient(135deg, rgba(26,26,30,0.95) 0%, rgba(26,26,30,0.85) 100%);
-    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(26,26,30,0.98) 0%, rgba(26,26,30,0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(201,166,107,0.3);
     border-radius: 12px;
     padding: 40px;
     max-width: 680px;
@@ -1560,23 +1571,62 @@ body::after {
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: modalEnter 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .modal-close {
     position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 32px;
+    top: 16px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
     font-weight: 300;
     color: var(--text-muted);
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
     line-height: 1;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
 }
 
 .modal-close:hover {
     color: var(--accent);
+    background: rgba(201,166,107,0.1);
+    transform: rotate(90deg);
+}
+
+.modal-content h2,
+.modal-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.modal-subtitle {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 28px;
+    line-height: 1.6;
 }
 
 .modal-content h2 {
@@ -1595,51 +1645,44 @@ body::after {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 18px;
+    margin-bottom: 18px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
     display: block;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 8px;
+    letter-spacing: 0.03em;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 12px 16px;
+    padding: 12px 14px;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
     color: var(--text-primary);
     font-size: 14px;
     font-family: inherit;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: rgba(201, 166, 107, 0.4);
+    border-color: rgba(201, 166, 107, 0.5);
     background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 0 3px rgba(201, 166, 107, 0.08);
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    box-shadow: 0 0 0 3px rgba(201, 166, 107, 0.1);
 }
 
 .form-group input::placeholder,
@@ -1650,55 +1693,241 @@ body::after {
 .form-group textarea {
     resize: vertical;
     min-height: 80px;
+    line-height: 1.6;
 }
 
 .form-actions {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     justify-content: flex-end;
-    margin-top: 30px;
-    padding-top: 25px;
-    border-top: 1px solid var(--border);
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .btn-secondary {
-    padding: 12px 28px;
+    padding: 11px 24px;
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 8px;
     color: var(--text-secondary);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
     border-color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
 }
 
 .btn-primary {
-    padding: 12px 28px;
-    background: rgba(201, 166, 107, 0.15);
-    border: 1px solid rgba(201, 166, 107, 0.3);
+    padding: 11px 24px;
+    background: linear-gradient(135deg, rgba(201, 166, 107, 0.2) 0%, rgba(201, 166, 107, 0.15) 100%);
+    border: 1px solid rgba(201, 166, 107, 0.35);
     border-radius: 8px;
     color: var(--accent);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-    background: rgba(201, 166, 107, 0.25);
+    background: linear-gradient(135deg, rgba(201, 166, 107, 0.3) 0%, rgba(201, 166, 107, 0.25) 100%);
     border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(201, 166, 107, 0.15);
+    box-shadow: 0 8px 24px rgba(201, 166, 107, 0.2);
 }
 
-/* 响应式 */
+/* ===== Toast 提示 - 精致现代风 ===== */
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 320px;
+    max-width: 420px;
+    background: linear-gradient(135deg, rgba(26,26,30,0.98) 0%, rgba(26,26,30,0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.hide {
+    transform: translateX(120%);
+    opacity: 0;
+}
+
+.toast-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.toast-icon.success {
+    background: rgba(90, 125, 90, 0.3);
+    color: #7DA87D;
+}
+
+.toast-icon.error {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.toast-icon.warning {
+    background: rgba(201, 166, 107, 0.2);
+    color: var(--accent);
+}
+
+.toast-icon.info {
+    background: rgba(100, 150, 200, 0.2);
+    color: #6496c8;
+}
+
+.toast-message {
+    flex: 1;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.toast-close {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.toast-close:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.05);
+}
+
+/* ===== 确认对话框 - 精致现代风 ===== */
+.confirm-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9998;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.confirm-overlay.show {
+    opacity: 1;
+}
+
+.confirm-dialog {
+    background: linear-gradient(135deg, rgba(26,26,30,0.98) 0%, rgba(26,26,30,0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(201,166,107,0.3);
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+    transform: scale(0.96) translateY(10px);
+    animation: modalEnter 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.confirm-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.confirm-icon.warning {
+    background: rgba(201, 166, 107, 0.15);
+    color: var(--accent);
+}
+
+.confirm-icon.danger {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+}
+
+.confirm-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.confirm-message {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.confirm-actions .btn-secondary,
+.confirm-actions .btn-primary {
+    flex: 1;
+    max-width: 140px;
+}
+
+/* 响应式优化 */
 @media (max-width: 640px) {
     .modal-content {
         padding: 30px 20px;
@@ -1715,6 +1944,30 @@ body::after {
     
     .btn-secondary,
     .btn-primary {
+        width: 100%;
+    }
+    
+    .toast-container {
+        left: 16px;
+        right: 16px;
+    }
+    
+    .toast {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .confirm-dialog {
+        padding: 28px 20px;
+    }
+    
+    .confirm-actions {
+        flex-direction: column;
+    }
+    
+    .confirm-actions .btn-secondary,
+    .confirm-actions .btn-primary {
+        max-width: none;
         width: 100%;
     }
 }
