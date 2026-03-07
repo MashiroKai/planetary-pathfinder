@@ -303,8 +303,8 @@ function submitApplication(event) {
     // 关闭模态框
     closeApplicationForm();
     
-    // 显示成功提示
-    alert('✅ 申请提交成功！\n\n数据已保存到后台管理系统\n管理员可在管理后台查看申请信息。');
+    // 显示成功提示（简洁版，面向申请者）
+    alert('✅ 申请提交成功！');
     
     // 重置表单
     form.reset();

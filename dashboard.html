@@ -307,11 +307,58 @@
                 </div>
             </div>
 
+            <!-- 添加管理员模态框 -->
+            <div id="addAdminModal" class="modal">
+                <div class="modal-content">
+                    <h3>添加管理员</h3>
+                    <form onsubmit="handleAddAdmin(event)">
+                        <div class="form-group">
+                            <label>用户名</label>
+                            <input type="text" id="newAdminUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label>密码</label>
+                            <input type="password" id="newAdminPassword" required>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-action btn-secondary" onclick="closeAddAdminModal()">取消</button>
+                            <button type="submit" class="btn-action btn-primary">添加</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 修改密码模态框 -->
+            <div id="changePasswordModal" class="modal">
+                <div class="modal-content">
+                    <h3>🔑 修改密码</h3>
+                    <form onsubmit="handleChangePassword(event)">
+                        <div class="form-group">
+                            <label>当前密码</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>新密码</label>
+                            <input type="password" id="newPassword" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>确认新密码</label>
+                            <input type="password" id="confirmPassword" required minlength="6">
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-action btn-secondary" onclick="closeChangePasswordModal()">取消</button>
+                            <button type="submit" class="btn-action btn-primary">确认修改</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- 管理员管理 -->
             <div class="data-section" id="adminsSection" style="display:none;">
                 <h2>👤 管理员管理</h2>
                 <div class="data-actions">
                     <button class="btn-action btn-primary" onclick="showAddAdminModal()">➕ 添加管理员</button>
+                    <button class="btn-action btn-secondary" onclick="showChangePasswordModal()">🔑 修改密码</button>
                 </div>
                 <div id="adminsTable">
                     <div class="empty-state">
@@ -329,27 +376,6 @@
                 </p>
             </div>
         </main>
-    </div>
-
-    <!-- 添加管理员模态框 -->
-    <div id="addAdminModal" class="modal">
-        <div class="modal-content">
-            <h3>添加管理员</h3>
-            <form onsubmit="handleAddAdmin(event)">
-                <div class="form-group">
-                    <label>用户名</label>
-                    <input type="text" id="newAdminUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>密码</label>
-                    <input type="password" id="newAdminPassword" required>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-action btn-secondary" onclick="closeAddAdminModal()">取消</button>
-                    <button type="submit" class="btn-action btn-primary">添加</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script src="dashboard.js"></script>

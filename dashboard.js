@@ -58,12 +58,13 @@ function renderApplications(applications) {
                     <th>邮箱</th>
                     <th>手机</th>
                     <th>提交时间</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody>
     `;
     
-    applications.forEach(app => {
+    applications.forEach((app, index) => {
         html += `
             <tr>
                 <td>${app.name || '-'}</td>
@@ -73,6 +74,9 @@ function renderApplications(applications) {
                 <td>${app.email || '-'}</td>
                 <td>${app.phone || '-'}</td>
                 <td>${formatDate(app.submitTime)}</td>
+                <td>
+                    <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index})">🗑️ 删除</button>
+                </td>
             </tr>
         `;
     });
@@ -278,6 +282,68 @@ function handleLogout() {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
     window.location.href = 'admin.html';
+}
+
+// 删除申请
+function deleteApplication(index) {
+    if (!confirm('确定要删除这条申请信息吗？此操作不可恢复。')) return;
+    
+    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+    applications.splice(index, 1);
+    localStorage.setItem('applications', JSON.stringify(applications));
+    
+    loadApplications();
+    updateStats();
+}
+
+// 显示修改密码模态框
+function showChangePasswordModal() {
+    document.getElementById('changePasswordModal').style.display = 'flex';
+}
+
+// 关闭修改密码模态框
+function closeChangePasswordModal() {
+    document.getElementById('changePasswordModal').style.display = 'none';
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+}
+
+// 修改密码
+function handleChangePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // 验证新密码
+    if (newPassword !== confirmPassword) {
+        alert('❌ 两次输入的新密码不一致！');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        alert('❌ 密码长度不能少于 6 位！');
+        return;
+    }
+    
+    // 验证当前密码
+    const currentUser = localStorage.getItem('adminUser');
+    const admins = JSON.parse(localStorage.getItem('admins') || '[]');
+    const admin = admins.find(a => a.username === currentUser);
+    
+    if (!admin || admin.password !== currentPassword) {
+        alert('❌ 当前密码错误！');
+        return;
+    }
+    
+    // 更新密码
+    admin.password = newPassword;
+    localStorage.setItem('admins', JSON.stringify(admins));
+    
+    closeChangePasswordModal();
+    alert('✅ 密码修改成功！');
 }
 
 // 格式化日期
