@@ -51,30 +51,25 @@ function hideToast(toast) {
 // ===== 确认对话框 =====
 let confirmCallback = null;
 
+// 执行确认操作（全局函数）
+function executeConfirm() {
+    console.log('[Dashboard] executeConfirm 被调用');
+    if (confirmCallback) {
+        console.log('[Dashboard] 执行回调函数');
+        confirmCallback();
+        confirmCallback = null;
+    }
+    hideConfirmDialog();
+}
+
 function initConfirmDialog() {
+    console.log('[Dashboard] initConfirmDialog 被调用');
     const overlay = document.getElementById('confirmOverlay');
+    console.log('[Dashboard] confirmOverlay 元素:', overlay);
     if (!overlay) {
         console.log('[Dashboard] 确认对话框元素不存在');
         return;
     }
-    
-    const cancelBtn = overlay.querySelector('.btn-cancel');
-    const confirmBtn = overlay.querySelector('.btn-confirm');
-    
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', hideConfirmDialog);
-    }
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            console.log('[Dashboard] 确认按钮被点击');
-            if (confirmCallback) {
-                console.log('[Dashboard] 执行回调函数');
-                confirmCallback();
-            }
-            hideConfirmDialog();
-        });
-    }
-    
     console.log('[Dashboard] 确认对话框已初始化');
 }
 

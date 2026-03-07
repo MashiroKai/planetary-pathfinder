@@ -12,6 +12,79 @@
         body {
             background: #0f0f12;
         }
+        
+        /* 确认对话框样式 */
+        .confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .confirm-dialog {
+            background: #1a1a1f;
+            border: 1px solid #2a2a30;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .confirm-icon.warning {
+            color: #fbbf24;
+        }
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .confirm-message {
+            font-size: 14px;
+            color: #a0a0a8;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .confirm-actions button {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .confirm-actions .btn-cancel {
+            background: #2a2a30;
+            color: white;
+        }
+        .confirm-actions .btn-cancel:hover {
+            background: #3a3a40;
+        }
+        .confirm-actions .btn-confirm {
+            background: linear-gradient(135deg, #ff6b35, #ff8c5a);
+            color: white;
+        }
+        .confirm-actions .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
         .dashboard-container {
             display: flex;
             min-height: 100vh;
@@ -386,17 +459,14 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- 确认对话框 -->
-    <div class="confirm-overlay" id="confirmOverlay">
-        <!-- 确认对话框 -->
-        <div id="confirmOverlay" class="confirm-overlay" style="display:none;">
-            <div class="confirm-dialog">
-                <div class="confirm-icon warning" id="confirmIcon">⚠️</div>
-                <div class="confirm-title" id="confirmTitle">确认操作</div>
-                <div class="confirm-message" id="confirmMessage">确定要执行此操作吗？</div>
-                <div class="confirm-actions">
-                    <button class="btn-secondary btn-cancel" id="confirmCancel">取消</button>
-                    <button class="btn-primary btn-confirm" id="confirmOk">确认</button>
-                </div>
+    <div id="confirmOverlay" class="confirm-overlay" style="display:none;">
+        <div class="confirm-dialog">
+            <div class="confirm-icon warning">⚠️</div>
+            <div class="confirm-title" id="confirmTitle">确认操作</div>
+            <div class="confirm-message" id="confirmMessage">确定要执行此操作吗？</div>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="hideConfirmDialog()">取消</button>
+                <button class="btn-confirm" onclick="executeConfirm()">确认</button>
             </div>
         </div>
     </div>
