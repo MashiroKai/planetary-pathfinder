@@ -290,19 +290,19 @@ async function submitApplication(event) {
     const successView = document.getElementById('submitSuccess');
     const formData = new FormData(form);
     
-    // 收集表单数据
+    // 收集表单数据（使用数据库列名格式）
     const data = {
         name: formData.get('name'),
         gender: formData.get('gender'),
         college: formData.get('college'),
         major: formData.get('major'),
         grade: formData.get('grade'),
-        studentId: formData.get('studentId'),
+        student_id: formData.get('studentId'),  // 数据库列名是 student_id
         email: formData.get('email'),
         phone: formData.get('phone'),
         skills: formData.get('skills'),
         motivation: formData.get('motivation'),
-        submitTime: new Date().toISOString()
+        submit_time: new Date().toISOString()  // 数据库列名是 submit_time
     };
     
     console.log('[Submit] 申请数据:', data);

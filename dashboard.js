@@ -170,7 +170,7 @@ function renderApplications(applications) {
                 <td>${app.grade || '-'}</td>
                 <td>${app.email || '-'}</td>
                 <td>${app.phone || '-'}</td>
-                <td>${formatDate(app.submit_time || app.submitTime)}</td>
+                <td>${formatDate(app.submit_time)}</td>
                 <td>
                     <button class="btn-action btn-secondary" style="padding:5px 10px;font-size:12px;background:#dc3545;border-color:#dc3545;" onclick="deleteApplication(${index}, '${appId}')">🗑️ 删除</button>
                 </td>
