@@ -88,8 +88,19 @@ async function loadAdmins() {
         const data = await res.json();
         renderAdmins(data.admins || []);
     } catch (err) {
-        // 演示模式
-        const admins = JSON.parse(localStorage.getItem('admins') || '[{"username":"admin","createdAt":"' + new Date().toISOString() + '"}]');
+        // 演示模式：检查是否已有管理员，没有则创建默认账号
+        let admins = JSON.parse(localStorage.getItem('admins') || '[]');
+        if (admins.length === 0) {
+            // 创建默认管理员账号：admin / admin123
+            admins = [{
+                username: 'admin',
+                password: 'admin123',
+                createdAt: new Date().toISOString(),
+                isDefault: true
+            }];
+            localStorage.setItem('admins', JSON.stringify(admins));
+            console.log('[PathFinder] 已创建默认管理员账号：admin / admin123');
+        }
         renderAdmins(admins);
     }
 }

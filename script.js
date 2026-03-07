@@ -285,33 +285,6 @@ function submitApplication(event) {
         motivation: formData.get('motivation')
     };
     
-    // 构建邮件内容
-    const subject = `行星探路者项目申请 - ${data.name} - ${data.college} - ${data.major}`;
-    const body = `【行星探路者项目申请】
-
-【基本信息】
-姓名：${data.name}
-性别：${data.gender}
-学院：${data.college}
-专业：${data.major}
-年级：${data.grade}
-学号：${data.studentId}
-
-【联系方式】
-邮箱：${data.email}
-手机：${data.phone}
-
-【技能特长】
-${data.skills || '无'}
-
-【申请理由】
-${data.motivation}
-
----
-此邮件由行星探路者网站申请表单自动生成
-提交时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
-`;
-
     // 添加提交时间
     data.submitTime = new Date().toISOString();
     
@@ -327,17 +300,11 @@ ${data.motivation}
         body: JSON.stringify(data)
     }).catch(err => console.log('API 不可用，已保存到本地存储'));
     
-    // 使用 mailto 发送邮件（同时发送给 kaiyu 和 fengcq）
-    const mailtoLink = `mailto:kaiyu@mail.ustc.edu.cn,fengcq@ustc.edu.cn?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // 打开邮件客户端
-    window.location.href = mailtoLink;
-    
     // 关闭模态框
     closeApplicationForm();
     
     // 显示成功提示
-    alert('✅ 申请提交成功！\n\n数据已保存到后台管理系统\n邮件将发送至：\n- kaiyu@mail.ustc.edu.cn\n- fengcq@ustc.edu.cn\n\n请在邮件客户端确认发送。');
+    alert('✅ 申请提交成功！\n\n数据已保存到后台管理系统\n管理员可在管理后台查看申请信息。');
     
     // 重置表单
     form.reset();
