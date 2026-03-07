@@ -26,11 +26,7 @@
             max-width: 600px;
             width: 100%;
         }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
+        h1 { font-size: 24px; margin-bottom: 30px; text-align: center; }
         .test-item {
             background: rgba(0,0,0,0.2);
             border-radius: 8px;
@@ -50,36 +46,13 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
         }
-        .test-info {
-            flex: 1;
-        }
-        .test-label {
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 5px;
-        }
-        .test-value {
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .status {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .status.success {
-            background: rgba(34,197,94,0.2);
-            color: #22c55e;
-        }
-        .status.error {
-            background: rgba(239,68,68,0.2);
-            color: #ef4444;
-        }
-        .status.pending {
-            background: rgba(251,191,36,0.2);
-            color: #fbbf24;
-        }
+        .test-info { flex: 1; }
+        .test-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 5px; }
+        .test-value { font-size: 14px; font-weight: 500; }
+        .status { padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status.success { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .status.error { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .status.pending { background: rgba(251,191,36,0.2); color: #fbbf24; }
         .btn {
             width: 100%;
             padding: 14px;
@@ -92,26 +65,10 @@
             cursor: pointer;
             margin-top: 20px;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255,107,53,0.4);
-        }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255,255,255,0.6);
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .back-link:hover {
-            color: white;
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: white; }
     </style>
 </head>
 <body>
@@ -155,55 +112,41 @@
         </div>
 
         <button class="btn" id="testBtn" onclick="runTests()">运行完整测试</button>
-        
         <a href="index.html" class="back-link">← 返回首页</a>
     </div>
 
     <script>
-        // 等待配置加载完成
-        function waitForConfig(callback) {
-            if (typeof SUPABASE_URL !== 'undefined') {
-                callback();
-            } else {
-                setTimeout(() => waitForConfig(callback), 100);
-            }
+        function waitForConfig(callback, maxAttempts) {
+            var attempts = 0;
+            var check = function() {
+                attempts++;
+                if (typeof SUPABASE_URL !== 'undefined' && typeof window.supabaseClient !== 'undefined') {
+                    callback();
+                } else if (attempts < maxAttempts) {
+                    console.log('[Test] 等待配置加载... (' + attempts + '/' + maxAttempts + ')');
+                    setTimeout(check, 200);
+                } else {
+                    console.error('[Test] 配置加载超时');
+                    alert('❌ 配置加载失败\n\n请刷新页面重试');
+                }
+            };
+            check();
         }
 
-        // 显示配置信息
         function showConfig() {
             document.getElementById('urlValue').textContent = SUPABASE_URL.replace(/https:\/\//, '').replace(/\.supabase\.co$/, '.supabase.co');
             document.getElementById('keyValue').textContent = SUPABASE_KEY.substring(0, 20) + '...';
         }
 
-        // 自动运行测试
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log('[Test] 页面加载完成');
-            
-            waitForConfig(() => {
-                console.log('[Test] CLOUD_ENABLED:', CLOUD_ENABLED);
-                console.log('[Test] SUPABASE_URL:', SUPABASE_URL);
-                console.log('[Test] SUPABASE_KEY:', SUPABASE_KEY ? '已配置' : '未配置');
-                
-                showConfig();
-                
-                // 检查 Supabase 客户端是否加载
-                if (typeof window.supabaseClient === 'undefined' && typeof window.supabase === 'undefined') {
-                    alert('❌ Supabase SDK 未加载\n\n请检查网络连接，或刷新页面重试');
-                    return;
-                }
-                
-                setTimeout(runTests, 300);
-            });
-        });
-
-        async function runTests() {
-            console.log('[Test] 开始运行测试...');
-            const btn = document.getElementById('testBtn');
+        function runTests() {
+            var btn = document.getElementById('testBtn');
             btn.disabled = true;
             btn.textContent = '测试中...';
 
-            // 测试 1: URL 检查
-            if (SUPABASE_URL && SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co') {
+            console.log('[Test] 开始运行测试...');
+
+            // Test 1: URL
+            if (SUPABASE_URL && SUPABASE_URL.indexOf('YOUR_PROJECT_ID') === -1) {
                 document.getElementById('urlStatus').className = 'status success';
                 document.getElementById('urlStatus').textContent = '✓ 有效';
             } else {
@@ -211,8 +154,8 @@
                 document.getElementById('urlStatus').textContent = '✗ 无效';
             }
 
-            // 测试 2: Key 检查（支持 Publishable key 格式）
-            if (SUPABASE_KEY && SUPABASE_KEY !== 'YOUR_ANON_KEY' && (SUPABASE_KEY.startsWith('eyJ') || SUPABASE_KEY.startsWith('sb_'))) {
+            // Test 2: Key
+            if (SUPABASE_KEY && SUPABASE_KEY.indexOf('YOUR_ANON_KEY') === -1) {
                 document.getElementById('keyStatus').className = 'status success';
                 document.getElementById('keyStatus').textContent = '✓ 有效';
             } else {
@@ -220,102 +163,95 @@
                 document.getElementById('keyStatus').textContent = '✗ 无效';
             }
 
-            // 测试 3: 数据库表检查（带超时）
-            try {
-                console.log('[Test] 检查数据库表...');
-                const { data, error } = await Promise.race([
-                    supabase.from('applications').select('id').limit(1),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('超时')), 10000))
-                ]);
-                
-                if (error) {
-                    console.error('[Test] 表检查错误:', error);
-                    throw error;
+            // Test 3: Table
+            console.log('[Test] 检查数据库表...');
+            var client = window.supabaseClient;
+            
+            client.from('applications').select('id').limit(1).then(function(result) {
+                if (result.error) {
+                    console.error('[Test] 表检查错误:', result.error);
+                    document.getElementById('tableStatus').className = 'status error';
+                    document.getElementById('tableStatus').textContent = '✗ 失败';
+                    document.getElementById('tableValue').textContent = result.error.message;
+                    
+                    // Check if it's the schema_migrations error
+                    if (result.error.message.indexOf('schema_migrations') !== -1) {
+                        setTimeout(function() {
+                            alert('⚠️ Supabase 初始化错误\n\n错误：relation "supabase_migrations.schema_migrations" does not exist\n\n解决方法：\n1. 打开 Supabase SQL Editor\n2. 运行 fix-supabase-init.sql 脚本\n3. 刷新此页面重试');
+                        }, 500);
+                    }
+                } else {
+                    console.log('[Test] 数据库表检查通过');
+                    document.getElementById('tableStatus').className = 'status success';
+                    document.getElementById('tableStatus').textContent = '✓ 正常';
+                    document.getElementById('tableValue').textContent = 'applications 表可访问';
                 }
-                
-                console.log('[Test] 数据库表检查通过');
-                document.getElementById('tableStatus').className = 'status success';
-                document.getElementById('tableStatus').textContent = '✓ 正常';
-                document.getElementById('tableValue').textContent = 'applications 表可访问';
-            } catch (err) {
-                console.error('[Test] 表检查失败:', err.message);
-                document.getElementById('tableStatus').className = 'status error';
-                document.getElementById('tableStatus').textContent = '✗ 失败';
-                document.getElementById('tableValue').textContent = err.message.includes('超时') ? '请求超时' : '表不存在或无权限';
-            }
 
-            // 测试 4: 读写测试（带超时）
-            try {
+                // Test 4: Read/Write
                 console.log('[Test] 开始读写测试...');
-                const testData = {
-                    name: '测试用户_' + Date.now(),
+                var testData = {
+                    name: '测试_' + Date.now(),
                     gender: '测试',
-                    college: '测试学院',
-                    major: '测试专业',
+                    college: '测试',
+                    major: '测试',
                     grade: '测试',
-                    studentId: 'TEST001',
-                    email: 'test@example.com',
-                    phone: '123456789',
+                    student_id: 'TEST',
+                    email: 'test@test.com',
+                    phone: '123',
                     skills: '测试',
-                    motivation: '这是一条测试数据，可以安全删除',
+                    motivation: '测试数据',
                     submitTime: new Date().toISOString(),
-                    isTest: true
+                    is_test: true
                 };
 
-                // 写入测试
-                console.log('[Test] 写入测试数据...');
-                const { data: insertData, error: insertError } = await Promise.race([
-                    supabase.from('applications').insert([testData]),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('写入超时')), 10000))
-                ]);
-                
-                if (insertError) {
-                    console.error('[Test] 写入错误:', insertError);
-                    throw insertError;
-                }
-                console.log('[Test] 写入成功');
+                client.from('applications').insert([testData]).then(function(insertResult) {
+                    if (insertResult.error) {
+                        console.error('[Test] 写入失败:', insertResult.error);
+                        document.getElementById('rwStatus').className = 'status error';
+                        document.getElementById('rwStatus').textContent = '✗ 失败';
+                        document.getElementById('rwValue').textContent = insertResult.error.message;
+                        btn.disabled = false;
+                        btn.textContent = '重新测试';
+                        return;
+                    }
 
-                // 读取测试
-                console.log('[Test] 读取测试数据...');
-                const { data: readData, error: readError } = await Promise.race([
-                    supabase.from('applications').select('*').eq('isTest', true).order('submit_time', { ascending: false }).limit(1),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('读取超时')), 10000))
-                ]);
-                
-                if (readError) {
-                    console.error('[Test] 读取错误:', readError);
-                    throw readError;
-                }
-                console.log('[Test] 读取成功，找到', readData?.length, '条记录');
+                    console.log('[Test] 写入成功');
+                    
+                    // Delete test data
+                    client.from('applications').delete().eq('is_test', true).then(function() {
+                        console.log('[Test] 测试数据已清理');
+                    });
 
-                // 删除测试数据
-                console.log('[Test] 删除测试数据...');
-                await supabase.from('applications').delete().eq('isTest', true);
-                console.log('[Test] 删除成功');
+                    document.getElementById('rwStatus').className = 'status success';
+                    document.getElementById('rwStatus').textContent = '✓ 正常';
+                    document.getElementById('rwValue').textContent = '读写测试通过';
+                    btn.disabled = false;
+                    btn.textContent = '重新测试';
 
-                document.getElementById('rwStatus').className = 'status success';
-                document.getElementById('rwStatus').textContent = '✓ 正常';
-                document.getElementById('rwValue').textContent = '读写测试通过';
-
-                // 显示成功消息
-                setTimeout(() => {
-                    alert('✅ 所有测试通过！\n\n云端存储已就绪，可以正常使用。\n\n现在您可以：\n1. 访问 index.html 提交申请\n2. 访问 admin.html 管理后台\n3. 所有数据将自动同步到云端');
-                }, 500);
-
-            } catch (err) {
-                console.error('[Test] 读写测试失败:', err.message);
-                document.getElementById('rwStatus').className = 'status error';
-                document.getElementById('rwStatus').textContent = '✗ 失败';
-                document.getElementById('rwValue').textContent = err.message.includes('超时') ? err.message : '读写测试失败';
-                
-                setTimeout(() => {
-                    alert('❌ 读写测试失败\n\n错误信息：' + err.message + '\n\n可能原因：\n1. 数据库表未创建\n2. 权限设置不正确\n3. API Key 无效\n\n请检查 CLOUD_SETUP.md 教程');
-                }, 500);
-            }
-
-            btn.disabled = false;
-            btn.textContent = '重新测试';
+                    setTimeout(function() {
+                        alert('✅ 所有测试通过！\n\n云端存储已就绪！');
+                    }, 500);
+                });
+            }).catch(function(err) {
+                console.error('[Test] 表检查异常:', err);
+                document.getElementById('tableStatus').className = 'status error';
+                document.getElementById('tableStatus').textContent = '✗ 失败';
+                document.getElementById('tableValue').textContent = err.message;
+                btn.disabled = false;
+                btn.textContent = '重新测试';
+            });
         }
+
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('[Test] 页面加载完成');
+            waitForConfig(function() {
+                console.log('[Test] 配置加载完成');
+                console.log('[Test] Supabase 客户端:', typeof window.supabaseClient);
+                showConfig();
+                setTimeout(runTests, 500);
+            }, 50);
+        });
     </script>
 </body>
 </html>

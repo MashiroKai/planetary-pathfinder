@@ -1,182 +1,129 @@
 // ===== 云端存储模块 =====
-// 实现数据的云端同步（使用 Supabase）
 
-const CloudStorage = {
-    // 获取 Supabase 客户端
-    getClient() {
+var CloudStorage = {
+    getClient: function() {
         return window.supabaseClient;
     },
 
-    // 检查云端是否可用
-    isAvailable() {
-        const available = CLOUD_ENABLED && 
-               SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co' && 
-               SUPABASE_KEY !== 'YOUR_ANON_KEY' &&
+    isAvailable: function() {
+        var available = CLOUD_ENABLED && 
+               SUPABASE_URL.indexOf('YOUR_PROJECT_ID') === -1 && 
+               SUPABASE_KEY.indexOf('YOUR_ANON_KEY') === -1 &&
                typeof window.supabaseClient !== 'undefined';
         
         if (!available) {
-            console.log('[Cloud] 云端不可用:', {
-                CLOUD_ENABLED,
-                URL_CONFIGURED: SUPABASE_URL !== 'https://YOUR_PROJECT_ID.supabase.co',
-                KEY_CONFIGURED: SUPABASE_KEY !== 'YOUR_ANON_KEY',
-                CLIENT_LOADED: typeof window.supabaseClient !== 'undefined'
-            });
+            console.log('[Cloud] 云端不可用');
         }
         
         return available;
     },
 
-    // 保存申请到云端
-    async saveApplication(data) {
+    saveApplication: async function(data) {
         if (!this.isAvailable()) {
-            console.log('[Cloud] 云端未启用，仅保存到本地');
+            console.log('[Cloud] 云端未启用');
             return { success: false, local: true };
         }
 
         try {
-            const client = this.getClient();
-            const { data: result, error } = await client
-                .from('applications')
-                .insert([data]);
+            var client = this.getClient();
+            var result = await client.from('applications').insert([data]);
             
-            if (error) throw error;
+            if (result.error) throw result.error;
             console.log('[Cloud] 申请已保存到云端');
-            return { success: true, data: result };
+            return { success: true, data: result.data };
         } catch (err) {
-            console.error('[Cloud] 保存失败:', err);
+            console.error('[Cloud] 保存失败:', err.message);
             return { success: false, error: err };
         }
     },
 
-    // 从云端获取所有申请
-    async getApplications() {
+    getApplications: async function() {
         if (!this.isAvailable()) {
-            console.log('[Cloud] 云端未启用，返回本地数据');
             return null;
         }
 
         try {
-            const client = this.getClient();
-            const { data, error } = await client
-                .from('applications')
-                .select('*')
-                .order('submit_time', { ascending: false });
+            var client = this.getClient();
+            var result = await client.from('applications').select('*').order('submit_time', { ascending: false });
             
-            if (error) throw error;
-            console.log('[Cloud] 获取到', data?.length || 0, '条申请');
-            return data || [];
+            if (result.error) throw result.error;
+            console.log('[Cloud] 获取到', result.data ? result.data.length : 0, '条申请');
+            return result.data || [];
         } catch (err) {
-            console.error('[Cloud] 获取失败:', err);
+            console.error('[Cloud] 获取失败:', err.message);
             return null;
         }
     },
 
-    // 从云端删除申请
-    async deleteApplication(id) {
+    deleteApplication: async function(id) {
         if (!this.isAvailable()) {
             return { success: false, error: '云端未启用' };
         }
 
         try {
-            const client = this.getClient();
-            const { error } = await client
-                .from('applications')
-                .delete()
-                .eq('id', id);
+            var client = this.getClient();
+            var result = await client.from('applications').delete().eq('id', id);
             
-            if (error) throw error;
-            console.log('[Cloud] 已删除申请 ID:', id);
+            if (result.error) throw result.error;
+            console.log('[Cloud] 已删除申请');
             return { success: true };
         } catch (err) {
-            console.error('[Cloud] 删除失败:', err);
+            console.error('[Cloud] 删除失败:', err.message);
             return { success: false, error: err };
         }
     },
 
-    // 管理员登录验证
-    async validateAdmin(username, password) {
+    validateAdmin: async function(username, password) {
         if (!this.isAvailable()) {
             return { success: false, error: '云端未启用' };
         }
 
         try {
-            const client = this.getClient();
-            const { data, error } = await client
-                .from('admins')
-                .select('*')
-                .eq('username', username)
-                .eq('password', password)
-                .single();
+            var client = this.getClient();
+            var result = await client.from('admins').select('*').eq('username', username).eq('password', password).single();
             
-            if (error || !data) {
+            if (result.error || !result.data) {
                 return { success: false };
             }
-            return { success: true, user: data };
+            return { success: true, user: result.data };
         } catch (err) {
             return { success: false, error: err };
         }
     },
 
-    // 添加管理员
-    async addAdmin(username, password) {
+    addAdmin: async function(username, password) {
         if (!this.isAvailable()) {
             return { success: false, error: '云端未启用' };
         }
 
         try {
-            const client = this.getClient();
-            const { error } = await client
-                .from('admins')
-                .insert([{ username, password }]);
+            var client = this.getClient();
+            var result = await client.from('admins').insert([{ username: username, password: password }]);
             
-            if (error) throw error;
-            console.log('[Cloud] 已添加管理员:', username);
+            if (result.error) throw result.error;
+            console.log('[Cloud] 已添加管理员');
             return { success: true };
         } catch (err) {
-            console.error('[Cloud] 添加管理员失败:', err);
+            console.error('[Cloud] 添加失败:', err.message);
             return { success: false, error: err };
         }
     },
 
-    // 修改管理员密码
-    async updatePassword(username, newPassword) {
+    updatePassword: async function(username, newPassword) {
         if (!this.isAvailable()) {
             return { success: false, error: '云端未启用' };
         }
 
         try {
-            const client = this.getClient();
-            const { error } = await client
-                .from('admins')
-                .update({ password: newPassword })
-                .eq('username', username);
+            var client = this.getClient();
+            var result = await client.from('admins').update({ password: newPassword }).eq('username', username);
             
-            if (error) throw error;
-            console.log('[Cloud] 密码已更新:', username);
+            if (result.error) throw result.error;
+            console.log('[Cloud] 密码已更新');
             return { success: true };
         } catch (err) {
-            console.error('[Cloud] 修改密码失败:', err);
+            console.error('[Cloud] 修改失败:', err.message);
             return { success: false, error: err };
-        }
-    },
-
-    // 获取统计数据
-    async getStats() {
-        if (!this.isAvailable()) {
-            return null;
-        }
-
-        try {
-            const client = this.getClient();
-            const { count, error } = await client
-                .from('applications')
-                .select('*', { count: 'exact', head: true });
-            
-            if (error) throw error;
-            return { total: count };
-        } catch (err) {
-            console.error('[Cloud] 获取统计失败:', err);
-            return null;
         }
     }
 };
