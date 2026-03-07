@@ -160,24 +160,40 @@
     </div>
 
     <script>
+        // 等待配置加载完成
+        function waitForConfig(callback) {
+            if (typeof SUPABASE_URL !== 'undefined') {
+                callback();
+            } else {
+                setTimeout(() => waitForConfig(callback), 100);
+            }
+        }
+
         // 显示配置信息
-        document.getElementById('urlValue').textContent = SUPABASE_URL.replace(/https:\/\//, '').replace(/\.supabase\.co$/, '.supabase.co');
-        document.getElementById('keyValue').textContent = SUPABASE_KEY.substring(0, 20) + '...';
+        function showConfig() {
+            document.getElementById('urlValue').textContent = SUPABASE_URL.replace(/https:\/\//, '').replace(/\.supabase\.co$/, '.supabase.co');
+            document.getElementById('keyValue').textContent = SUPABASE_KEY.substring(0, 20) + '...';
+        }
 
         // 自动运行测试
         window.addEventListener('DOMContentLoaded', () => {
             console.log('[Test] 页面加载完成');
-            console.log('[Test] CLOUD_ENABLED:', CLOUD_ENABLED);
-            console.log('[Test] SUPABASE_URL:', SUPABASE_URL);
-            console.log('[Test] SUPABASE_KEY:', SUPABASE_KEY ? '已配置' : '未配置');
             
-            // 检查 Supabase SDK 是否加载
-            if (typeof window.supabase === 'undefined') {
-                alert('❌ Supabase SDK 未加载\n\n请检查网络连接，或刷新页面重试');
-                return;
-            }
-            
-            setTimeout(runTests, 300);
+            waitForConfig(() => {
+                console.log('[Test] CLOUD_ENABLED:', CLOUD_ENABLED);
+                console.log('[Test] SUPABASE_URL:', SUPABASE_URL);
+                console.log('[Test] SUPABASE_KEY:', SUPABASE_KEY ? '已配置' : '未配置');
+                
+                showConfig();
+                
+                // 检查 Supabase 客户端是否加载
+                if (typeof window.supabaseClient === 'undefined' && typeof window.supabase === 'undefined') {
+                    alert('❌ Supabase SDK 未加载\n\n请检查网络连接，或刷新页面重试');
+                    return;
+                }
+                
+                setTimeout(runTests, 300);
+            });
         });
 
         async function runTests() {
