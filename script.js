@@ -282,6 +282,10 @@ window.addEventListener('click', (e) => {
 async function submitApplication(event) {
     event.preventDefault();
     
+    console.log('[Submit] 开始提交申请...');
+    console.log('[Submit] CloudStorage 存在:', typeof CloudStorage !== 'undefined');
+    console.log('[Submit] CLOUD_ENABLED:', typeof CLOUD_ENABLED !== 'undefined' ? CLOUD_ENABLED : 'undefined');
+    
     const form = document.getElementById('applicationForm');
     const successView = document.getElementById('submitSuccess');
     const formData = new FormData(form);
@@ -301,23 +305,29 @@ async function submitApplication(event) {
         submitTime: new Date().toISOString()
     };
     
-    // 优先保存到云端
+    console.log('[Submit] 申请数据:', data);
+    
+    // 保存到云端
     let savedToCloud = false;
-    if (typeof CloudStorage !== 'undefined') {
+    if (typeof CloudStorage !== 'undefined' && CloudStorage.isAvailable()) {
+        console.log('[Submit] 尝试保存到云端...');
         const cloudResult = await CloudStorage.saveApplication(data);
+        console.log('[Submit] 云端保存结果:', cloudResult);
         if (cloudResult.success) {
             savedToCloud = true;
-            console.log('[PathFinder] 申请已同步到云端');
+            console.log('[Submit] ✓ 申请已保存到云端');
+        } else {
+            console.error('[Submit] ✗ 云端保存失败:', cloudResult.error);
         }
+    } else {
+        console.log('[Submit] 云端不可用，使用本地存储');
     }
     
     // 同时保存到本地（作为备份）
-    if (!savedToCloud) {
-        const applications = JSON.parse(localStorage.getItem('applications') || '[]');
-        applications.push(data);
-        localStorage.setItem('applications', JSON.stringify(applications));
-        console.log('[PathFinder] 申请已保存到本地');
-    }
+    const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+    applications.push(data);
+    localStorage.setItem('applications', JSON.stringify(applications));
+    console.log('[Submit] ✓ 申请已保存到本地，当前共', applications.length, '条');
     
     // 发送到 API（如果有后端）
     fetch('/api/admin/applications', {
@@ -329,4 +339,6 @@ async function submitApplication(event) {
     // 隐藏表单，显示成功提示
     form.style.display = 'none';
     successView.style.display = 'block';
+    
+    console.log('[Submit] 提交完成');
 }
