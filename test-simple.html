@@ -226,8 +226,7 @@
                     phone: '123',
                     skills: 'Test',
                     motivation: 'Test data',
-                    submit_time: new Date().toISOString(),
-                    is_test: true
+                    submit_time: new Date().toISOString()
                 };
 
                 supabase.from('applications').insert([testData]).then(function(insertResult) {
@@ -242,8 +241,9 @@
 
                     log('写入成功', 'success');
                     
-                    // Cleanup
-                    supabase.from('applications').delete().eq('is_test', true).then(function() {
+                    // Cleanup - delete by name
+                    var testName = testData.name;
+                    supabase.from('applications').delete().eq('name', testName).then(function() {
                         log('测试数据已清理', 'info');
                     });
 
